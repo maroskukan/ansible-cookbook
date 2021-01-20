@@ -61,3 +61,13 @@ Add this to your rc file, e.g. `~/.zshrc`
 # Ansible aliases
 alias ap='ansible-playbook'
 ```
+
+Gathering Facts about localhost
+```bash
+ansible -m setup localhost
+```
+
+Pretty printed module documentation
+```bash
+ansible-doc copy | bat --language yml
+```
