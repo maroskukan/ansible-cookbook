@@ -1,0 +1,19 @@
+---
+- name: Ensure ~/.gitconfig copied from master.gitconfig
+  hosts: localhost
+  tasks:
+  - copy:
+      src: "../adhoc/master.gitconfig"
+      dest: "~/.gitconfig"
+      
+- name: Ensure bat an jq are installed
+  gather_facts: false
+  hosts: localhost
+  tasks:
+  - apt:
+      name:
+        - bat
+        - jq
+      state: present
+    become: true
+    
