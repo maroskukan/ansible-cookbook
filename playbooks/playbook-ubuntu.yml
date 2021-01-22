@@ -6,7 +6,7 @@
       src: "../adhoc/master.gitconfig"
       dest: "~/.gitconfig"
       
-- name: Ensure bat an jq are installed
+- name: Ensure bat jq and vagrant are installed
   gather_facts: false
   hosts: localhost
   tasks:
@@ -14,6 +14,7 @@
       name:
         - bat
         - jq
+        - vagrant
       state: present
     become: true
     
