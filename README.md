@@ -163,8 +163,29 @@ ansible -m command -a "git config --global --list" centos
 
 ## Running Playbook
 
-```bash
+```ini
 ansible-playbook playbooks/playbook.yml
+PLAY [Ensure git installed] *****************************************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************************************************
+ok: [192.168.137.106]
+ok: [192.168.137.162]
+
+TASK [package] ******************************************************************************************************************************************
+ok: [192.168.137.162]
+ok: [192.168.137.106]
+
+PLAY [Ensure ~/.gitconfig copied from master.gitconfig] *************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************************************************
+ok: [192.168.137.106]
+ok: [192.168.137.162]
+ok: [192.168.137.137]
+ok: [192.168.137.245]
+
+TASK [first show no config in targets] ******************************************************************************************************************
+fatal: [192.168.137.137]: FAILED! => {"changed": true, "cmd": ["git", "config", "--global", "--list"], "delta": "0:00:00.002296", "end": "2021-02-02 14:57:03.018818", "msg": "non-zero return code", "rc": 128, "start": "2021-02-02 14:57:03.016522", "stderr": "fatal: unable to read config file '/home/vagrant/.gitconfig': No such file or directory", "stderr_lines": ["fatal: unable to read config file '/home/vagrant/.gitconfig': No such file or directory"], "stdout": "", "stdout_lines": []}
+[Output omitted]
 ```
 
 
