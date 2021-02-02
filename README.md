@@ -54,13 +54,136 @@ Simple playbook.yml syntax examples.
         dest: "~/.gitconfig"
 ```
 
+## Inventory
+
+Inventory files describe a collection of hosts or systems you want to manage using ansible commands. Hosts can be assigned to groups and groups can contain child groups. Hosts can be members of multiple groups. Variables can be set that apply to hosts and groups. For example connection parameters, such as SSH username or port.
+
+It is common to define the inventory file within `ansible.cfg` configuration file under `[defaults]` sections. For example.
+```ini
+[defaults]
+inventory = ./inventory
+```
+
+To verify if the inventory was correctly formatted and understood by ansible you can use `ansible-inventory` command with options such as `list` or `graph`
+```json
+ansible-inventory --list
+{
+    "_meta": {
+        "hostvars": {
+            "192.168.137.106": {
+                "ansible_port": 22,
+                "ansible_user": "vagrant"
+            },
+            "192.168.137.137": {
+                "ansible_port": 22,
+                "ansible_user": "vagrant"
+            },
+            "192.168.137.162": {
+                "ansible_port": 22,
+                "ansible_user": "vagrant"
+            },
+            "192.168.137.245": {
+                "ansible_port": 22,
+                "ansible_user": "vagrant"
+            }
+        }
+    },
+    "all": {
+        "children": [
+            "ungrouped",
+            "vagrant"
+        ]
+    },
+    "centos": {
+        "hosts": [
+            "192.168.137.106",
+            "192.168.137.162"
+        ]
+    },
+    "ubuntu": {
+        "hosts": [
+            "192.168.137.137",
+            "192.168.137.245"
+        ]
+    },
+    "vagrant": {
+        "children": [
+            "centos",
+            "ubuntu"
+        ]
+    }
+}
+```
+```bash
+ansible-inventory --graph
+@all:
+  |--@ungrouped:
+  |--@vagrant:
+  |  |--@centos:
+  |  |  |--192.168.137.106
+  |  |  |--192.168.137.162
+  |  |--@ubuntu:
+  |  |  |--192.168.137.137
+  |  |  |--192.168.137.245
+```
+
+## Connection Parameters
+
+### Testing Connection
+
+In order to conduct a simple reachability test for hosts defined in inventory you can use Ansible ad-hoc command with `ping` module. Below I am running this module agains `vagrant` host group.
+
+```json
+ansible ubuntu -m ping
+192.168.137.137 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+192.168.137.245 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+```
+
+Another way is to leverage `command` module and execute a command on manage host. In this case below, git is not installed on hosts that are part of centos group.
+
+```json
+ansible -m command -a "git config --global --list" centos
+192.168.137.106 | FAILED | rc=2 >>
+[Errno 2] No such file or directory: b'git': b'git'
+192.168.137.162 | FAILED | rc=2 >>
+[Errno 2] No such file or directory: b'git': b'git'
+```
+
+## Running Playbook
+
+```bash
+ansible-playbook playbooks/playbook.yml
+```
+
+
 ## Tips
 
-Add this to your rc file, e.g. `~/.zshrc`
+### Creating Command Aliases
+
+Add this to your shell rc file, e.g. `~/.zshrc`
+
 ```bash
 # Ansible aliases
 alias ap='ansible-playbook'
+alias acl="ansible-config list"
+alias ail="ansible-inventory --list"
 ```
+
+Once new aliases are loaded simple source the modified file `source ~/.zshrc` and you are ready to go.
+
+### Gathering Facts
 
 Gathering Facts about localhost
 ```bash
@@ -70,4 +193,15 @@ ansible -m setup localhost
 Pretty printed module documentation
 ```bash
 ansible-doc copy | bat --language yml
+```
+
+### Loading private keys
+
+The private keys needs to be loaded before Ansible can connect to machines provisioned by Vagrant.
+
+```bash
+for IdentityFile in $(vagrant ssh-config | grep IdentityFile | cut -d" " -f4)
+do
+    ssh-add ${IdentityFile}
+done
 ```
