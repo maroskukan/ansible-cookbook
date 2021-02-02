@@ -6,7 +6,7 @@ Installation depends on control node configuration. For example on Ubuntu the pr
 
 ## Documentation
 
-[Modules Intro] https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html
+[Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
 
 
 ## Ad Hoc Configuration
