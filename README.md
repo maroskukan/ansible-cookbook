@@ -239,9 +239,15 @@ Pretty printed module documentation
 ansible-doc copy | bat --language yml
 ```
 
+### Generating dynamic inventory
+
+If you are using Vagrant with machines that have IP address assigned dynamicaly through DHCP, you may want to generate inventory file from `vagrant ssh-config`. Good tool to leverage is [Vagrant-to-ansible-inventory](https://github.com/haidaraM/vagrant-to-ansible-inventory) project.
+
+I recommend creating a Python virtual environment and install the required package using pip before running the tool.
+
 ### Loading private keys
 
-The private keys needs to be loaded before Ansible can connect to machines provisioned by Vagrant.
+If private keys are not explicitly defined within hosts file they need to be loaded before Ansible can connect to machines provisioned by Vagrant.
 
 ```bash
 for IdentityFile in $(vagrant ssh-config | grep IdentityFile | cut -d" " -f4)
