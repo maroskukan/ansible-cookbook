@@ -1,0 +1,5 @@
+# inventory can be expressed in an ini format
+# careful with extensions to files when using an inventory directory, they can lead to the file being excluded and thus missing inventory. For example, `.ini` files in an inventory directory
+  # See INVENTORY_IGNORE_EXTS for default ignored extensions
+  # ansible-config --list # then look for INVENTORY_IGNORE_EXTS
+sles40 ansible_host=192.168.137.40 ansible_private_key_file='.vagrant/machines/sles40/hyperv/private_key' 
