@@ -1,0 +1,2 @@
+[containers]
+ansible_container_test[1:3] ansible_connection=community.docker.docker

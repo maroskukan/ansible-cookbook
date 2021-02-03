@@ -267,6 +267,14 @@ ansible_container_test2 | SUCCESS => {
 }
 ```
 
+You can verify the changes by running bash on a sample container.
+
+```bash
+docker container exec -it ansible_container_test1 bash
+root@19e8d86a26b1:/# git config --global --list
+user.email=maros.kukan@gmail.com
+user.name=Maros
+```
 
 
 ## Tips

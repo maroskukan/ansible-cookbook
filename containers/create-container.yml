@@ -1,0 +1,26 @@
+---
+
+- name: Ensure pre-reqs for docker_container module 
+  hosts: localhost
+  tasks:
+  - pip: name=docker state=present
+
+- name: Ensure docker containers created
+  hosts: localhost
+  tasks:
+  - name: Ensure docker container started 
+    community.docker.docker_container:
+      image: python
+      #command: bash
+      interactive: yes
+      name: "{{ item }}" 
+      state: started
+    loop: "{{ query('inventory_hostnames', 'containers') }}"
+
+- name: Ensure git configured in containers
+  hosts: containers 
+  tasks:
+  - community.general.git_config: scope=global list_all=yes
+  - community.general.git_config: scope=global name=user.email value=maros.kukan@gmail.com
+  - community.general.git_config: scope=global name=user.name value=Maros
+  - community.general.git_config: scope=global list_all=yes
