@@ -3,17 +3,17 @@
 all:
   hosts:
     ubuntu10:
-      ansible_host: 192.168.137.205
-      ansible_private_key_file: .vagrant/machines/ubuntu10/private_key
+      ansible_host: 192.168.137.5
+      ansible_private_key_file: .vagrant/machines/ubuntu10/hyperv/private_key
 
     ubuntu11:
-      ansible_host: 192.168.137.81 
+      ansible_host: 192.168.137.253 
       ansible_private_key_file: .vagrant/machines/ubuntu11/hyperv/private_key
     
     centos20:
-      ansible_host: 192.168.137.200 
+      ansible_host: 192.168.137.115 
       ansible_private_key_file: .vagrant/machines/centos20/hyperv/private_key
     
     centos21:
-      ansible_host: 192.168.137.248 
+      ansible_host: 192.168.137.185 
       ansible_private_key_file: .vagrant/machines/centos21/hyperv/private_key
