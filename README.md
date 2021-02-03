@@ -152,6 +152,11 @@ ansible-inventory --graph [--vars]
 
 ## Connection Parameters
 
+To display available `connection' module plugins use the following command:
+```bash
+ansible-doc -t connection --list
+```
+
 ### Testing Connection
 
 In order to conduct a simple reachability test for hosts defined in inventory you can use Ansible ad-hoc command with `ping` module. Below I am running this module agains `vagrant` host group.
@@ -209,6 +214,11 @@ ok: [192.168.137.245]
 TASK [first show no config in targets] ******************************************************************************************************************
 fatal: [192.168.137.137]: FAILED! => {"changed": true, "cmd": ["git", "config", "--global", "--list"], "delta": "0:00:00.002296", "end": "2021-02-02 14:57:03.018818", "msg": "non-zero return code", "rc": 128, "start": "2021-02-02 14:57:03.016522", "stderr": "fatal: unable to read config file '/home/vagrant/.gitconfig': No such file or directory", "stderr_lines": ["fatal: unable to read config file '/home/vagrant/.gitconfig': No such file or directory"], "stdout": "", "stdout_lines": []}
 [Output omitted]
+```
+## Ansible Galaxy
+
+```bash
+ansible-galaxy collection install -r requirements.yml
 ```
 
 
