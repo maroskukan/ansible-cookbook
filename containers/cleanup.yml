@@ -3,7 +3,8 @@
   tasks:
   - name: Ensure container is absent 
     docker_container:
-      name: "{{ item }}" 
+      name: "{{ item }}"
+      container_default_behavior: compatibility 
       force_kill: yes
       state: absent 
     loop: "{{ query('inventory_hostnames', 'containers') }}"
