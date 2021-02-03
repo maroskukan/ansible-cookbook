@@ -6,7 +6,25 @@ Installation depends on control node configuration. For example on Ubuntu the pr
 
 ## Documentation
 
-[Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
+### Web
+- [Ansible Project](https://docs.ansible.com)
+- [Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
+
+
+### Cli 
+
+```bash
+# List the plugins for particular type (shell)
+ansible-doc -t shell --list
+
+# Retrieve more information about plugin gor given type
+ansible-doc -t shell powershell
+```
+
+```bash
+# Without specifying type, default `module` type is assumed
+ansible-doc git 
+```
 
 
 ## Ad Hoc Configuration
@@ -57,6 +75,11 @@ Simple playbook.yml syntax examples.
 ## Inventory
 
 Inventory files describe a collection of hosts or systems you want to manage using ansible commands. Hosts can be assigned to groups and groups can contain child groups. Hosts can be members of multiple groups. Variables can be set that apply to hosts and groups. For example connection parameters, such as SSH username or port.
+
+There are many different types of inventory files, to see full list use the following `ansible-doc` command.
+```bash
+ansible-doc -t inventory --list
+```
 
 It is common to define the inventory file within `ansible.cfg` configuration file under `[defaults]` sections. For example.
 ```ini
@@ -115,7 +138,7 @@ ansible-inventory --list
 }
 ```
 ```bash
-ansible-inventory --graph
+ansible-inventory --graph [--vars]
 @all:
   |--@ungrouped:
   |--@vagrant:
