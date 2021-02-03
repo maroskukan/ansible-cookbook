@@ -222,6 +222,53 @@ ansible-galaxy collection install -r requirements.yml
 ```
 
 
+## Ansible Console
+
+From documentation, `ansible-console` is a REPL that allows for running ad-hoc tasks against a chosen inventory (based on dominis’ ansible-shell).
+
+```bash
+ansible-console [intentory] --module-path=~/.ansible/plugins/modules:/usr/share/ansible/plugins/modules:~/.ansible/collections/ansible_collections/community/general/plugins/modules
+ansible_container_test2 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+ansible_container_test3 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+ansible_container_test1 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+maros@containers (3)[f:5]$ git_config list_all=yes scope=global
+ansible_container_test3 | SUCCESS => {
+    "changed": false,
+    "config_values": {
+        "user.email": "maros.kukan@gmail.com",
+        "user.name": "Maros"
+    },
+    "msg": ""
+}
+ansible_container_test1 | SUCCESS => {
+    "changed": false,
+    "config_values": {
+        "user.email": "maros.kukan@gmail.com",
+        "user.name": "Maros"
+    },
+    "msg": ""
+}
+ansible_container_test2 | SUCCESS => {
+    "changed": false,
+    "config_values": {
+        "user.email": "maros.kukan@gmail.com",
+        "user.name": "Maros"
+    },
+    "msg": ""
+}
+```
+
+
+
 ## Tips
 
 ### Creating Command Aliases
