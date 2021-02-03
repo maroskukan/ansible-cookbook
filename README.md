@@ -276,6 +276,11 @@ user.email=maros.kukan@gmail.com
 user.name=Maros
 ```
 
+## Ansible Pull
+
+A decentralized mode of operations, where self-manage nodes have scheduled job to pull playbookf from central VCS and execute it using local ansible installation.
+
+Full documentation on this feature can be found [here](https://docs.ansible.com/ansible/latest/cli/ansible-pull.html)
 
 ## Tips
 
