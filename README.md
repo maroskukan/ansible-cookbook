@@ -1,10 +1,9 @@
 # Ansible
 
 - [Ansible](#ansible)
-  - [Installation](#installation)
+  - [Introduction](#introduction)
   - [Documentation](#documentation)
-    - [Web Docs](#web-docs)
-    - [Cli Docs](#cli-docs)
+  - [Installation](#installation)
   - [Ansible Configuration](#ansible-configuration)
     - [Settings Management](#settings-management)
     - [Host-Based Connection Variables](#host-based-connection-variables)
@@ -34,31 +33,22 @@
     - [Loading private keys](#loading-private-keys)
 
 
+## Introduction
+
+Ansible is a tool that helps to automate IT tasks. Such task may include installing, updating and configuring software and services. 
+
+
+## Documentation
+
+- [Ansible Project](https://docs.ansible.com)
+- [Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
+
+
 ## Installation
 
 Installation depends on control node configuration. For example on Ubuntu the preferred way to install Ansible is to use the system package manager, in this case `apt`. Wherease on Mac OS X the preferred method is to install via python package manager `pip`.
 
 Therefore, best way is to always consult the [Installing Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) section of available at official documentation.
-
-## Documentation
-
-### Web Docs
-- [Ansible Project](https://docs.ansible.com)
-- [Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
-
-
-### Cli Docs
-
-```bash
-# List the plugins for particular type (shell)
-ansible-doc -t shell --list
-
-# Retrieve more information about plugin gor given type
-ansible-doc -t shell powershell
-
-# Without specifying type, default `module` type is assumed
-ansible-doc git 
-```
 
 
 ## Ansible Configuration
