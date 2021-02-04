@@ -6,12 +6,12 @@ Installation depends on control node configuration. For example on Ubuntu the pr
 
 ## Documentation
 
-### Web
+### Web Docs
 - [Ansible Project](https://docs.ansible.com)
 - [Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
 
 
-### Cli 
+### Cli Docs
 
 ```bash
 # List the plugins for particular type (shell)
@@ -217,10 +217,37 @@ fatal: [192.168.137.137]: FAILED! => {"changed": true, "cmd": ["git", "config", 
 ```
 ## Ansible Galaxy
 
+[Ansible Galaxy](https://galaxy.ansible.com) privides a platform for distributing high level constructs that can be reused amoungs ansible users.
+
+### Gathering information about role
+
+```bash
+ansible-galaxy role info geerlingguy.docker | bat -l yml
+```
+
+### Installing a role
+
+```bash
+ansible-galaxy role install geerlingguy.docker 
+```
+
+### Installing a collection
+
 ```bash
 ansible-galaxy collection install -r requirements.yml
 ```
 
+### Listing installed collections
+
+```bash
+ansible-galaxy collection list
+
+# /home/maros/.ansible/collections/ansible_collections
+Collection        Version
+----------------- -------
+community.docker  1.2.1
+community.general 2.0.0
+```
 
 ## Ansible Console
 
@@ -293,6 +320,7 @@ Add this to your shell rc file, e.g. `~/.zshrc`
 alias ap='ansible-playbook'
 alias acl="ansible-config list"
 alias ail="ansible-inventory --list"
+alias aig="ansible-inventory --graph"
 ```
 
 Once new aliases are loaded simple source the modified file `source ~/.zshrc` and you are ready to go.
