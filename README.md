@@ -65,7 +65,7 @@ The behavior of Ansible installation can be adjusted by modifying settings in An
 - The `ANSIBLE_CONFIG` environment variable.
 - The `./ansible.cfg` in ansible command current working directory
 - The `~/.ansible.cfg` located in your home folder
-- The `/etc/ansible/ansible.cfg` the default installation folder, if exists
+- The `/etc/ansible/ansible.cfg` the default installation folder
 
 To verify which location of ansible configuraiton file is being used when calling ansible commands, use the `ansible --version` command. 
 
@@ -131,6 +131,70 @@ More details on how to setup both, Control Machine and Remote node can be found 
 ## Modules
 
 From documenation, Modules (also referred to as “task plugins” or “library plugins”) are discrete units of code that can be used from the command line or in a playbook task. Ansible executes each module, usually on the remote managed node, and collects return values. In Ansible 2.10 and later, most modules are hosted in collections.
+
+To display all installed modeles on system use the `ansible-doc -l` command. The name and the description of module is displayed. To display information about a particular module use `ansible-doc [module-name]` for example:
+
+```yml
+ansible-doc copy | bat --language yml
+> ANSIBLE.BUILTIN.COPY    (/home/maros/.local/lib/python3.8/site-packages/ansible/modules/copy.py)
+
+        The `copy' module copies a file from the local or remote
+        machine to a location on the remote machine. Use the
+        [ansible.builtin.fetch] module to copy files from remote
+        locations to the local box. If you need variable interpolation
+        in copied files, use the [ansible.builtin.template] module.
+        Using a variable in the `content' field will result in
+        unpredictable output. For Windows targets, use the
+        [ansible.windows.win_copy] module instead.
+
+  * note: This module has a corresponding action plugin.
+
+OPTIONS (= is mandatory):
+
+- attributes
+        The attributes the resulting file or directory should have.
+        To get supported flags look at the man page for `chattr' on
+        the target system.
+        This string should contain the attributes in the same order as
+        the one displayed by `lsattr'.
+        The `=' operator is assumed as default, otherwise `+' or `-'
+        operators need to be included in the string.
+        (Aliases: attr)[Default: (null)]
+        type: str
+        version_added: 2.3
+        version_added_collection: ansible.builtin
+
+- backup
+        Create a backup file including the timestamp information so
+        you can get the original file back if you somehow clobbered it
+        incorrectly.
+        [Default: False]
+        type: bool
+        version_added: 0.7
+        version_added_collection: ansible.builtin
+[ Output omitted ]
+```
+
+Some common ansible modules include:
+
+- File Modules:
+  - `copy` Copy a local file to the manages host
+  - `file` Set permissions and other properties of files
+  - `lineinfile` Ensures a particular line is or is not in a file
+  - `synchronize` Synchronizes content using rsync
+- Software package modules:
+  - `apt` Manages Packages using APT
+  - `yum` Manages Packages using YUM
+  - `gem` Manages Ruby packages
+- System Modules
+  - `firewalld` Manages arbitrary ports and services using firewalld
+  - `reboot` Reboot the machine
+  - `service` Managing services
+  - `user` Add, remove and manage user accounts
+- Net Tools Modules
+  - `get_url` Download files over HTTP, HTTPS, or FTP
+  - `nmcli` Manage networking
+  - `uri` Interact with web services and comminicate with APIs
 
 
 ## Ad Hoc Mode
