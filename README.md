@@ -11,12 +11,15 @@
     - [Preparing the Control Machine](#preparing-the-control-machine)
     - [Preparing the Remote Node](#preparing-the-remote-node)
   - [Modules](#modules)
+    - [Command Modules](#command-modules)
   - [Ad Hoc Mode](#ad-hoc-mode)
   - [Inventory](#inventory)
   - [Connection Parameters](#connection-parameters)
     - [Testing Connection](#testing-connection)
   - [Playbook](#playbook)
+    - [Validating Playbook](#validating-playbook)
     - [Running Playbook](#running-playbook)
+    - [Variables in Playbook](#variables-in-playbook)
   - [Ansible Galaxy](#ansible-galaxy)
     - [Gathering information about role](#gathering-information-about-role)
     - [Installing a role](#installing-a-role)
@@ -183,6 +186,7 @@ Some common ansible modules include:
   - `lineinfile` Ensures a particular line is or is not in a file
   - `synchronize` Synchronizes content using rsync
 - Software package modules:
+  - `package` Manages Packages
   - `apt` Manages Packages using APT
   - `yum` Manages Packages using YUM
   - `gem` Manages Ruby packages
@@ -195,6 +199,14 @@ Some common ansible modules include:
   - `get_url` Download files over HTTP, HTTPS, or FTP
   - `nmcli` Manage networking
   - `uri` Interact with web services and comminicate with APIs
+
+### Command Modules
+
+There are a handful of modules that run commands directly on the manage host. You can use these if no other module is available to do what you need. They are **not idempotent** you must make sure that they are safe to run twice when using them. An example of such modules are:
+
+- `command` runs a single command on the system
+- `shell` runs a command on the remote system's shell (redirection to other features work)
+- `raw` simply run a command with no processing (can be dangerous but can be useful when managing systems that cannot have Python installed (for example legacy network equipment)
 
 
 ## Ad Hoc Mode
@@ -365,13 +377,18 @@ ansible -m command -a "git config --global --list" centos
 
 ## Playbook
 
-Playbook orchestrates the module execution. It describes on which `hosts` in which order to execute tasks that containes one or more modules. The the example below, we are executing single task using `copy` module on `localhost`. 
+Playbook is a YAML-based text file which list one or more plays in specific order. A play is an ordered list of tasks run against a specific hosts within an inventory.
 
+Each task runs a module that performs some simple action on or for the manage host. Most tasks are idempotent and can be safely run a second time without problems. 
+
+The the example below, we are executing single task using `copy` module on `localhost`. 
 
 ```yml
 ---
+- name: Description of first play
 - hosts: localhost
   tasks:
+    - name: Description of first task
     - copy: src="master.gitconfig" dest="~/.gitconfig"
 ```
 
@@ -386,6 +403,13 @@ The playbook below uses a different format, but results in same end state.
         dest: "~/.gitconfig"
 ```
 
+### Validating Playbook
+
+You can use `-C` option to perform a dry run of the playbook execution. This causes Ansible to report what changes would have occurred if the playbook were executed, but does not make any actual changes to managed hosts.
+
+```bash
+ansible-playbook -C playbook.yml
+```
 
 ### Running Playbook
 
@@ -413,6 +437,11 @@ TASK [first show no config in targets] *****************************************
 fatal: [192.168.137.137]: FAILED! => {"changed": true, "cmd": ["git", "config", "--global", "--list"], "delta": "0:00:00.002296", "end": "2021-02-02 14:57:03.018818", "msg": "non-zero return code", "rc": 128, "start": "2021-02-02 14:57:03.016522", "stderr": "fatal: unable to read config file '/home/vagrant/.gitconfig': No such file or directory", "stderr_lines": ["fatal: unable to read config file '/home/vagrant/.gitconfig': No such file or directory"], "stdout": "", "stdout_lines": []}
 [Output omitted]
 ```
+
+### Variables in Playbook
+
+
+
 ## Ansible Galaxy
 
 [Ansible Galaxy](https://galaxy.ansible.com) privides a platform for distributing high level constructs that can be reused amoungs ansible users.
