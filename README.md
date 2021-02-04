@@ -1,8 +1,40 @@
 # Ansible
 
+- [Ansible](#ansible)
+  - [Installation](#installation)
+  - [Documentation](#documentation)
+    - [Web Docs](#web-docs)
+    - [Cli Docs](#cli-docs)
+  - [Ansible Configuration](#ansible-configuration)
+    - [Settings Management](#settings-management)
+    - [Host-Based Connection Variables](#host-based-connection-variables)
+    - [Preparing the Control Machine](#preparing-the-control-machine)
+    - [Preparing the Remote Node](#preparing-the-remote-node)
+  - [Ad Hoc Mode](#ad-hoc-mode)
+  - [Inventory](#inventory)
+  - [Connection Parameters](#connection-parameters)
+    - [Testing Connection](#testing-connection)
+  - [Playbook](#playbook)
+    - [Running Playbook](#running-playbook)
+  - [Ansible Galaxy](#ansible-galaxy)
+    - [Gathering information about role](#gathering-information-about-role)
+    - [Installing a role](#installing-a-role)
+    - [Installing a collection](#installing-a-collection)
+    - [Listing installed collections](#listing-installed-collections)
+  - [Ansible Console](#ansible-console)
+  - [Ansible Pull](#ansible-pull)
+  - [Tips](#tips)
+    - [Creating Command Aliases](#creating-command-aliases)
+    - [Gathering Facts](#gathering-facts)
+    - [Generating dynamic inventory](#generating-dynamic-inventory)
+    - [Loading private keys](#loading-private-keys)
+
+
 ## Installation
 
-Installation depends on control node configuration. For example on Ubuntu the preferred way to install Ansible is to use the system package manager. Wherease on Mac OS X the preferred method is to install via pip.
+Installation depends on control node configuration. For example on Ubuntu the preferred way to install Ansible is to use the system package manager, in this case `apt`. Wherease on Mac OS X the preferred method is to install via python package manager `pip`.
+
+Therefore, best way is to always consult the [Installing Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) section of available at official documentation.
 
 ## Documentation
 
@@ -27,21 +59,90 @@ ansible-doc git
 ```
 
 
-## Ad Hoc Configuration
+## Ansible Configuration
 
-The following example demostrates the use of **copy** module.
+The behavior of Ansible installation can be adjusted by modifying settings in Ansible configuration file. Ansible chooses its current configuration from one of serveral possible locations. The following order applies:
 
+- The `ANSIBLE_CONFIG` environment variable.
+- The `./ansible.cfg` in ansible command current working directory
+- The `~/.ansible.cfg` located in your home folder
+- The `/etc/ansible/ansible.cfg` the default installation folder, if exists
+
+To verify which location of ansible configuraiton file is being used when calling ansible commands, use the `ansible --version` command. 
+
+To verify the content of ansible configuration file that is being used, use the `ansible-config view` command.
+
+### Settings Management
+
+Each ansible configuration `ansible.cfg` containes one ore more section titles enclosed in square brackets. Each section contains settings defined as key-valye pair.
+
+Basic operations use two main sections:
+
+- `[defaults]` sets defaults for Ansible operation, for example connection settings.
+- `[privilege_escalation]` configures how Ansible performs privileges escalation on managed hosts.
+
+```ini
+[defaults]
+host_key_checking = False
+inventory = ./inventory
 ```
+
+There are many other settings that can be defined in `[defaults]` section, for example:
+- `remote_user` specifies the user you want to use on the managed hosts. If unspecified, the current user name will be used.
+- `remote_port` specifies which sshd port you want to use on the managed hosts. If unspecified, the default port is 22.
+- `ask_pass` controls whether Ansible will prompt you for the SSH password. If unspecified, it is assumed that you are using SSH key-based authentication.
+
+
+The settings that can be defined in `[privilege_escalation]` section, for example:
+- `become` controls whether you will automatically use privilege escalation. Default is `no`.
+- `become_user` controls which user on the managed host Ansible should become (Default is `root`)
+- `become_method` controls how Ansible will become that user (using `sudo` by default, there are other options like `su`)
+- `become_ask_pass` controls whether to prompt you for a password for your become method (default is `no`)
+
+*Please note that many settings can be overrided at inventory level if required.*
+
+To view all available settings with their explanation use `ansible-config list` command.
+
+To view all values (including default) for current setting use the `ansible-config dump` command.
+
+### Host-Based Connection Variables
+
+As mentioned in section before, settings can be overrided at inventory level by setting connection variables. There ware multiple ways to accomplish this:
+- Place the settings in a file in the `host_vars` directory in the same directory as your inventory file
+- These settings override the ones in `ansible.cfg`
+- They also have slightly different syntax and naming. For example `remote_user` (global) vs `ansible_user` (inventory)
+
+
+### Preparing the Control Machine
+
+The Control Machine is server where Ansible is installed. In order to utilizede SSH key-based authentication it is required to generate a key pair, and distribute the public key to each remote node by storing it in `authorized_keys` file.
+
+### Preparing the Remote Node
+
+Although the default Ansible mode of operation which uses push model, does not require any installed agent present on the manage hosts, there are some required settings that need to be set in order for host to be managed by Ansible control node:
+
+- SSH key-based authentication to an unprivileged account that can use `sudo` to become `root` without a password.
+- Ansible allows further flexibility to meet your current security policy
+
+More details on how to setup both, Control Machine and Remote node can be found in this [Medium article](https://medium.com/openinfo/ansible-ssh-private-public-keys-and-agent-setup-19c50b69c8c)
+
+
+## Ad Hoc Mode
+
+Ad Hoc refers to mode where ansible is used one time, often to test module or experiment as it does not require any significant configuration (such as playbooks). When calling a module, you often need to define mandatory variables. In example below the `copy` module requires that you define source and destination path for file you want to copy. 
+
+
+```bash
 ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" localhost
 ```
 
 Dry run.
-```
+```bash
 ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" --check localhost
 ```
 
 Dry run with diff flag.
-```
+```bash
 ansible -m copy -a "src=master.gitconfig dest=~/.gitconfig" --check --diff localhost
 ```
 
@@ -52,42 +153,35 @@ ansible -m homebrew -a "name=bat state=latest" localhost
 ansible -m homebrew -a "name=jq state=latest" localhost
 ```
 
-## Playbook
-
-Simple playbook.yml syntax examples.
-
-```yml
----
-- hosts: localhost
-  tasks:
-    - copy: src="master.gitconfig" dest="~/.gitconfig"
-```
-
-```yml
----
-- hosts: localhost
-  tasks:
-    - copy: 
-        src: "master.gitconfig"
-        dest: "~/.gitconfig"
-```
 
 ## Inventory
 
-Inventory files describe a collection of hosts or systems you want to manage using ansible commands. Hosts can be assigned to groups and groups can contain child groups. Hosts can be members of multiple groups. Variables can be set that apply to hosts and groups. For example connection parameters, such as SSH username or port.
+Inventory files describe a collection of hosts or systems you want to manage using ansible commands. Hosts can be assigned to groups and groups can contain other child groups. Hosts can be members of multiple groups. Variables can be set that apply to hosts and groups. For example connection parameters, such as SSH username or port.
 
-There are many different types of inventory files, to see full list use the following `ansible-doc` command.
+There are many different types of inventory files. They can be defined in various formats, for example ini, yaml. To see full list use the following `ansible-doc` command.
 ```bash
 ansible-doc -t inventory --list
 ```
 
-It is common to define the inventory file within `ansible.cfg` configuration file under `[defaults]` sections. For example.
+It is common to define the location of inventory file within `ansible.cfg` configuration file under `[defaults]` sections. The below example defines an inventory folder `inventory` located in same directory as ansible configuration file.
 ```ini
 [defaults]
 inventory = ./inventory
 ```
 
-To verify if the inventory was correctly formatted and understood by ansible you can use `ansible-inventory` command with options such as `list` or `graph`
+The content of this folder is as follows:
+```bash
+inventory
+├── explicit-localhost
+├── group-centos
+├── group-ubuntu
+├── group-vagrant
+├── rhel-hosts.py
+├── sles-host
+├── ubuntu-centos-hosts.yml.orig
+```
+
+To verify if the inventory was correctly formatted and understood by ansible you can use `ansible-inventory` command with options such as `list` or `graph`. Example below shows the output of these commands.
 ```json
 ansible-inventory --list
 {
@@ -152,10 +246,19 @@ ansible-inventory --graph [--vars]
 
 ## Connection Parameters
 
-To display available `connection' module plugins use the following command:
+Connection parameters define a means how to interact with manage host. To display available `connection` module plugins use the following command:
+
 ```bash
 ansible-doc -t connection --list
+local                       execute on controller
+paramiko_ssh                Run tasks via python ssh (paramiko)
+psrp                        Run tasks over Microsoft PowerShell Remoting Protocol
+ssh                         connect via ssh client binary
+winrm                       Run tasks over Microsoft's WinRM
 ```
+
+By default, ssg connection protocol is leveraged when connecting to linux hosts. By using collections and roles it is possible to expand the dafualt list of connection plugins. 
+
 
 ### Testing Connection
 
@@ -189,7 +292,28 @@ ansible -m command -a "git config --global --list" centos
 [Errno 2] No such file or directory: b'git': b'git'
 ```
 
-## Running Playbook
+
+## Playbook
+
+Simple playbook.yml syntax examples.
+
+```yml
+---
+- hosts: localhost
+  tasks:
+    - copy: src="master.gitconfig" dest="~/.gitconfig"
+```
+
+```yml
+---
+- hosts: localhost
+  tasks:
+    - copy: 
+        src: "master.gitconfig"
+        dest: "~/.gitconfig"
+```
+
+### Running Playbook
 
 ```ini
 ansible-playbook playbooks/playbook.yml
