@@ -10,6 +10,7 @@
     - [Host-Based Connection Variables](#host-based-connection-variables)
     - [Preparing the Control Machine](#preparing-the-control-machine)
     - [Preparing the Remote Node](#preparing-the-remote-node)
+  - [Modules](#modules)
   - [Ad Hoc Mode](#ad-hoc-mode)
   - [Inventory](#inventory)
   - [Connection Parameters](#connection-parameters)
@@ -51,9 +52,7 @@ ansible-doc -t shell --list
 
 # Retrieve more information about plugin gor given type
 ansible-doc -t shell powershell
-```
 
-```bash
 # Without specifying type, default `module` type is assumed
 ansible-doc git 
 ```
@@ -103,7 +102,8 @@ The settings that can be defined in `[privilege_escalation]` section, for exampl
 
 To view all available settings with their explanation use `ansible-config list` command.
 
-To view all values (including default) for current setting use the `ansible-config dump` command.
+To view all values (including default) for current setting use the `ansible-config dump` command. To view only values that we changed use `ansible-config dump --only-changed`.
+
 
 ### Host-Based Connection Variables
 
@@ -117,6 +117,7 @@ As mentioned in section before, settings can be overrided at inventory level by 
 
 The Control Machine is server where Ansible is installed. In order to utilizede SSH key-based authentication it is required to generate a key pair, and distribute the public key to each remote node by storing it in `authorized_keys` file.
 
+
 ### Preparing the Remote Node
 
 Although the default Ansible mode of operation which uses push model, does not require any installed agent present on the manage hosts, there are some required settings that need to be set in order for host to be managed by Ansible control node:
@@ -125,6 +126,11 @@ Although the default Ansible mode of operation which uses push model, does not r
 - Ansible allows further flexibility to meet your current security policy
 
 More details on how to setup both, Control Machine and Remote node can be found in this [Medium article](https://medium.com/openinfo/ansible-ssh-private-public-keys-and-agent-setup-19c50b69c8c)
+
+
+## Modules
+
+From documenation, Modules (also referred to as “task plugins” or “library plugins”) are discrete units of code that can be used from the command line or in a playbook task. Ansible executes each module, usually on the remote managed node, and collects return values. In Ansible 2.10 and later, most modules are hosted in collections.
 
 
 ## Ad Hoc Mode
@@ -265,7 +271,7 @@ By default, ssg connection protocol is leveraged when connecting to linux hosts.
 In order to conduct a simple reachability test for hosts defined in inventory you can use Ansible ad-hoc command with `ping` module. Below I am running this module agains `vagrant` host group.
 
 ```json
-ansible ubuntu -m ping
+ansible -m ping ubuntu 
 192.168.137.137 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/bin/python3"
@@ -295,7 +301,8 @@ ansible -m command -a "git config --global --list" centos
 
 ## Playbook
 
-Simple playbook.yml syntax examples.
+Playbook orchestrates the module execution. It describes on which `hosts` in which order to execute tasks that containes one or more modules. The the example below, we are executing single task using `copy` module on `localhost`. 
+
 
 ```yml
 ---
@@ -303,6 +310,8 @@ Simple playbook.yml syntax examples.
   tasks:
     - copy: src="master.gitconfig" dest="~/.gitconfig"
 ```
+
+The playbook below uses a different format, but results in same end state.
 
 ```yml
 ---
@@ -312,6 +321,7 @@ Simple playbook.yml syntax examples.
         src: "master.gitconfig"
         dest: "~/.gitconfig"
 ```
+
 
 ### Running Playbook
 
