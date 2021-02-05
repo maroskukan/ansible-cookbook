@@ -5,7 +5,7 @@
   tasks:
   - pip: name=docker state=present
 
-- name: Ensure docker containers created
+- name: Ensure docker web containers are created
   hosts: localhost
   tasks:
   - name: Ensure docker container started 
@@ -16,12 +16,25 @@
       container_default_behavior: compatibility
       name: "{{ item }}" 
       state: started
-    loop: "{{ query('inventory_hostnames', 'containers') }}"
+    loop: "{{ query('inventory_hostnames', 'web_servers') }}"
 
-- name: Ensure git configured in containers
-  hosts: containers 
+- name: Ensure docker db containers are created
+  hosts: localhost
   tasks:
-  - community.general.git_config: scope=global list_all=yes
-  - community.general.git_config: scope=global name=user.email value=maros.kukan@gmail.com
-  - community.general.git_config: scope=global name=user.name value=Maros
-  - community.general.git_config: scope=global list_all=yes
+  - name: Ensure docker container started 
+    community.docker.docker_container:
+      image: python
+      #command: bash
+      interactive: yes
+      container_default_behavior: compatibility
+      name: "{{ item }}" 
+      state: started
+    loop: "{{ query('inventory_hostnames', 'db_servers') }}"
+
+# - name: Ensure git configured in web containers
+#   hosts: web_containers 
+#   tasks:
+#   - community.general.git_config: scope=global list_all=yes
+#   - community.general.git_config: scope=global name=user.email value=maros.kukan@gmail.com
+#   - community.general.git_config: scope=global name=user.name value=Maros
+#   - community.general.git_config: scope=global list_all=yes
