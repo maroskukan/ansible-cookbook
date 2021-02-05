@@ -24,6 +24,7 @@
       - [Managing Variables](#managing-variables)
       - [Referencing Variables](#referencing-variables)
       - [Host and Group Variables](#host-and-group-variables)
+      - [Protecting Variables](#protecting-variables)
   - [Ansible Galaxy](#ansible-galaxy)
     - [Gathering information about role](#gathering-information-about-role)
     - [Installing a role](#installing-a-role)
@@ -526,6 +527,39 @@ Host variables and group variables can be defined:
 - In the inventory itself
 - In `host_vars` and `group_vars` directories in the same directory as the inventory
 - In `host_vars` and `group_vars` directories in the same directory as the playbook. These are host and group based but have higher precedence than inventory variables.
+
+
+#### Protecting Variables
+
+There are cases where you need to store sensitive data such as passwords, API keys and other secrets. These secrets are passed to Ansible thorugh variables. 
+
+Ansible Vault provides a way to encrypt and decrypt files used by playbooks. The `ansible-vault` command is used to to manage these files.
+
+The syntax of this command is `ansible-vault [ create | view | edit ] <filename>`
+
+If the file already exists, you can encrypt it with `ansible-vault encrypt <filename>`. Optionally you can save the encrypted file with a new name using `--output=new_filename` option. 
+
+To decrypt a file use `ansible-vault decrypt <filename>`.
+
+When using playbook you with file encrypted by vault, you need to povide vault password using the `--vault-id` option. For example
+```bash
+ansible-playbook --ask-vault-pass <playbook>
+```
+
+The `@prompt` option will prompt user for the Ansible Vault password.
+
+In same cases you need to use multiple passwords for different files. In such case you need to set labels during file encryption for example.
+
+```bash
+# Encrypt files using labels
+ansible-vault encrypt <gvars_filename> --vault-id gvars@prompt
+ansible-vault encrypt <lvars_filename> --vault-id lvars@prompt
+# Specify the labels during playbook invocation
+ansible-playbook --vault-id gvars@prompt --vault-id lvars@prompt playbook.yml
+```
+
+If you need to change a password on an encrypted file. You can use the `ansible-vault rekey <filename>` option.
+
 
 
 ## Ansible Galaxy
