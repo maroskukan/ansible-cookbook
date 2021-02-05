@@ -19,6 +19,11 @@
     - [Validating Playbook](#validating-playbook)
     - [Running Playbook](#running-playbook)
     - [Variables in Playbook](#variables-in-playbook)
+      - [Naming Variables](#naming-variables)
+      - [Scoping Variables](#scoping-variables)
+      - [Managing Variables](#managing-variables)
+      - [Referencing Variables](#referencing-variables)
+      - [Host and Group Variables](#host-and-group-variables)
   - [Ansible Galaxy](#ansible-galaxy)
     - [Gathering information about role](#gathering-information-about-role)
     - [Installing a role](#installing-a-role)
@@ -316,6 +321,7 @@ ansible-inventory --graph [--vars]
   |  |  |--192.168.137.245
 ```
 
+
 ## Connection Parameters
 
 Connection parameters define a means how to interact with manage host. To display available `connection` module plugins use the following command:
@@ -330,7 +336,6 @@ winrm                       Run tasks over Microsoft's WinRM
 ```
 
 By default, ssg connection protocol is leveraged when connecting to linux hosts. By using collections and roles it is possible to expand the dafualt list of connection plugins. 
-
 
 ### Testing Connection
 
@@ -430,6 +435,97 @@ fatal: [192.168.137.137]: FAILED! => {"changed": true, "cmd": ["git", "config", 
 
 ### Variables in Playbook
 
+Variables increase the code reusability by decoupling dynamic values that are unique for given project. This simplifies the creation and maitenance of code and reduces number of erros.
+
+Variables can contain items like:
+- Unique Users to create, modify or delete
+- Unique Software to install and uninstall
+- Unique Services to start, stop and restart
+- Unique Credentials to manage
+
+#### Naming Variables
+
+Variables must start with a letter, and they can only contain letters, numbers and underscores. An example of valida variables include:
+
+```bash
+web_server
+remote_file
+file1
+file_1
+remote_server1
+remote_server_1
+```
+
+#### Scoping Variables
+
+There are three avaiable scopes (or reaches) where a variable exists:
+
+- **Global**
+  - The value is set for all hosts
+  - Example: extra variables you set in the job template
+- **Host**
+  - The value is set for a particular host (or group)
+  - Examples: variables set for a host in the inventory or *host_vars* directory, gathered facts
+- **Play**
+  - The value is set for all hosts in the context of the current play.
+  - Examples: **vars** directives in a play, **include_vars** tasks and so on
+
+There are few rules that define order of operations for variables:
+- If variable is defined at more than one level, the level with the highest precedence wins. 
+- A narrow scope generally takes precedence over a wider scope.
+- Variables that you define in an inventory are overridden by variables that you define in the playbook.
+- Variables defined in a playbook are overridden by "extra variables" defined on the command line with the `-e` option.
+
+#### Managing Variables
+
+Variables can be defined in multuple ways. Once common method is to place a variable in **vars** block at the beginning of a play:
+
+```yaml
+- hosts: all
+  vars:
+    user_name: joe
+    user_state: present
+```
+
+It is also possible to define play variables in external files. Use `var_files` at the start of the play to load variables from a list of files into the play:
+
+```yaml
+- hosts: all
+  vars_files:
+    - vars/users.yml
+```
+
+#### Referencing Variables
+
+After declaring variables, you can use them in tasks. Reference a variable by placing the variable name in double braces: `{{ variable_name }}`. Ansible substitutes the variable with its value when it runs the task.
+
+When you reference one variable as another variable's value, and the curly braces start the value, you must use quotes around teh value. For example `name: "{{ user_name }}`
+
+```yml
+- name: Example play
+  hosts: all
+  vars:
+    user_name: joe
+
+  tasks:
+    # This line wil read: Creates the user joe
+    - name: Creates the user {{ user_name }}
+      user:
+        # This line will create the user named joe
+        name: "{{ user_name }}"
+        state: present
+```
+
+#### Host and Group Variables
+
+Host variables applly to a specific host, whereas Group variables apply to all hosts in a host group or iin a group of host groups.
+
+Host variables take precedence over group variables, but variables defined inside a play take precedence over both.
+
+Host variables and group variables can be defined:
+- In the inventory itself
+- In `host_vars` and `group_vars` directories in the same directory as the inventory
+- In `host_vars` and `group_vars` directories in the same directory as the playbook. These are host and group based but have higher precedence than inventory variables.
 
 
 ## Ansible Galaxy
