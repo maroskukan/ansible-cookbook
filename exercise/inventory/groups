@@ -1,0 +1,5 @@
+[web_servers]
+web[01:02]
+[db_servers]
+db01
+db02
