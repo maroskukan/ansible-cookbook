@@ -79,3 +79,45 @@ ansible web3 --list-hosts
 [WARNING]: No hosts matched, nothing to do
   hosts (0):
 ```
+
+```bash
+# Targeting a specific host from a group
+ansible db_servers --limit db01 -m ping
+db01 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/libexec/platform-python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+```
+
+### Configuration
+
+```bash
+# Display all configuration
+ansible-config dump
+
+# Display only overrides
+ansible-cofnig dump --only-changed
+DEFAULT_HOST_LIST(/mnt/c/Users/maros/vagrant/ansible-cookbook/exercise/ansible.cfg) = ['/mnt/c/Users/maros/vagrant/ansible-cookbo
+ok/exercise/inventory']
+```
+
+*Tip: Ansible can access the hosts fine using names and key based authentication, but your system may not without prior configuration. To overcome this you can dump the ssh config from vagrant into `~/.ssh` folder and include in your main cofiguration file.*
+
+
+```bash
+cd provision && vagrant ssh-config > ~/.ssh/vagrants/ansible-exercise.config
+
+# Verify the file location
+/home/maros/.ssh/vagrants
+├── ansible-exercise.config
+
+# Verify main ssh config
+grep include ~/.ssh/config
+# Include Vagrant generated files
+Include vagrants/*
+```
+
+Now `ssh web01` will work automatically from your main machine.

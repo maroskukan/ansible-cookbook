@@ -1,0 +1,4 @@
+# Host variables for the db01 system
+---
+become_ask_pass: True
+custom_db_port: 1234
