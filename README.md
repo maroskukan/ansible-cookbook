@@ -4,6 +4,7 @@
   - [Introduction](#introduction)
   - [Documentation](#documentation)
   - [Installation](#installation)
+    - [Installing via PIP](#installing-via-pip)
   - [Ansible Configuration](#ansible-configuration)
     - [Settings Management](#settings-management)
     - [Host-Based Connection Variables](#host-based-connection-variables)
@@ -55,6 +56,40 @@ Ansible is a tool that helps to automate IT tasks. Such task may include install
 Installation depends on control node configuration. For example on Ubuntu the preferred way to install Ansible is to use the system package manager, in this case `apt`. Wherease on Mac OS X the preferred method is to install via python package manager `pip`.
 
 Therefore, best way is to always consult the [Installing Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) section of available at official documentation.
+
+### Installing via PIP
+
+One of the common ways is to install Ansible using Python's package manager `pip`. I highly recommend installing inside a virtual environment, for example using the [Simple Python Version Mamangement](https://github.com/pyenv/pyenv) and [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv) tool.
+
+```bash
+# Download and Install Python 3.9.6
+pyenv install 3.9.6
+
+# Create and activate virtual environment
+pyenv virtualenv 3.9.6 ansible-cookbook
+pyenv activate ansible-cookbook
+
+# Update pip, setuptools and install ansible
+pip install --upgrade pip setuptools
+pip install ansible
+
+# Verify ansible installation
+ansible --version
+ansible [core 2.11.4]
+  config file = /home/mkukan/code/maroskukan/ansible-cookbook/ansible.cfg
+  configured module search path = ['/home/mkukan/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /home/mkukan/.pyenv/versions/3.9.6/envs/ansible-cookbook/lib/python3.9/site-packages/ansible
+  ansible collection location = /home/mkukan/.ansible/collections:/usr/share/ansible/collections
+  executable location = /home/mkukan/.pyenv/versions/ansible-cookbook/bin/ansible
+  python version = 3.9.6 (default, Aug 21 2021, 19:18:25) [GCC 9.3.0]
+  jinja version = 3.0.1
+  libyaml = True
+
+# Finally to deactivate virtual environment
+pyenv deactivate ansible-cookbook
+```
+
+*Note: If your project directory has `.python-version` with name of the virtual environment defined, it will get automatically activated when you are in this directory.*
 
 
 ## Ansible Configuration
