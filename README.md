@@ -69,9 +69,9 @@ pyenv install 3.9.6
 pyenv virtualenv 3.9.6 ansible-cookbook
 pyenv activate ansible-cookbook
 
-# Update pip, setuptools and install ansible
+# Update pip, setuptools and install ansible and Vagrant to Ansible inventory
 pip install --upgrade pip setuptools
-pip install ansible
+pip install -r requirements.txt
 
 # Verify ansible installation
 ansible --version
