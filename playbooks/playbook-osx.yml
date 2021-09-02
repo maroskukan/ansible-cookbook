@@ -1,19 +1,19 @@
 ---
 # ansible -m copy -a "src=../adhoc/master.gitconfig dest=~/.gitconfig" localhost
 
-- name: Ensure ~/.gitconfig copied from master.gitconfig
+- name: Configure git and install packages
   hosts: localhost
   tasks:
-  - copy:
+  - name: Ensure ~/.gitconfig copied from master.gitconfig
+    ansible.builtin.copy:
       src: "../adhoc/master.gitconfig"
       dest: "~/.gitconfig"
   
-  - name: Ensure homebrew packages are installed.
-    hosts: localhost
-    tasks:
-    - homebrew:
-        name: "bat"
-        state: latest
-    - homebrew:
-        name: "jq"
-        state: latest
+  - name: Ensure homebrew packages are installed
+    community.general.homebrew:
+      name: [
+        'bat',
+        'jq'
+      ]
+      state: present
+      update_homebrew: yes
