@@ -1,0 +1,9 @@
+---
+- hosts: database
+  become: yes
+  tasks:
+    - name: install mysql-server
+      ansible.builtin.apt: name=mysql-server state=present update_cache=yes
+
+    - name: ensure mysql started
+      ansible.builtin.service: name=mysql state=started enabled=yes

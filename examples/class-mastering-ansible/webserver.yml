@@ -1,0 +1,14 @@
+---
+- hosts: webserver
+  become: yes
+  tasks:
+    - name: install web components
+      ansible.builtin.apt: name="{{ item }}" state=present update_cache=yes
+      with_items:
+        - apache2
+        - libapache2-mod-wsgi
+        - python3-pip
+        - python3-virtualenv
+
+    - name: ensure apache2 started
+      ansible.builtin.service: name=apache2 state=started enabled=yes

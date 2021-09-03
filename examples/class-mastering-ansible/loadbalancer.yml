@@ -1,0 +1,9 @@
+---
+- hosts: loadbalancer
+  become: yes
+  tasks:
+    - name: install nginx
+      ansible.builtin.apt: name=nginx state=present update_cache=yes
+
+    - name: ensure nginx started
+      ansible.builtin.service: name=nginx state=started enabled=yes

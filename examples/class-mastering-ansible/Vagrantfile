@@ -1,0 +1,19 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+    config.vm.provider "hyperv" do |h|
+        h.enable_virtualization_extensions = true
+        h.linked_clone = true
+    end
+    config.vm.box = "generic/ubuntu2004"
+    
+    # config.vm.provision "ansible" do |ansible|
+    #     ansible.playbook = "provision.yml"
+
+    config.vm.define "lb01"
+    (01..02).each do |i|
+        config.vm.define "app#{i}"
+    end
+    config.vm.define "db01"
+end
