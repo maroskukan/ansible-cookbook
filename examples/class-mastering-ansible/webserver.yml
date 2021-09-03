@@ -12,3 +12,11 @@
 
     - name: ensure apache2 started
       ansible.builtin.service: name=apache2 state=started enabled=yes
+
+    - name: ensure mod_wsgi enabled
+      community.general.apache2_module: name=wsgi state=present
+      notify: restart apache2
+
+  handlers:
+    - name: restart apache2
+      ansible.builtin.service: name=apache2 state=restarted
