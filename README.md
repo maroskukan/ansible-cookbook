@@ -38,6 +38,7 @@
     - [Gathering Facts](#gathering-facts)
     - [Generating dynamic inventory](#generating-dynamic-inventory)
     - [Loading private keys](#loading-private-keys)
+    - [Application Configuration Pillars](#application-configuration-pillars)
 
 
 ## Introduction
@@ -49,6 +50,7 @@ Ansible is a tool that helps to automate IT tasks. Such task may include install
 
 - [Ansible Project](https://docs.ansible.com)
 - [Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
+- [Modules Index](https://docs.ansible.com/ansible/latest/collections/all_plugins.html)
 - [Patterns - Targeting hosts and groups](https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html)
 
 
@@ -783,3 +785,12 @@ do
     ssh-add ${IdentityFile}
 done
 ```
+
+### Application Configuration Pillars
+
+Any application deployment can be broken down into four pillars or stages.
+
+1. Software Packages - Code required to run the software. Can come from software package repositories, (apt, yum, pip) as well as version control systems (git)
+2. Service Handlers - Such as scripts, init.d, systemd, they may be already included with software package
+3. System Configuration - Such as user permissions, firewall rules and any state that is required
+4. Software Configuration - Such as appication configuration and content files.
