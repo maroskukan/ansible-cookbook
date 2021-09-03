@@ -49,6 +49,7 @@ Ansible is a tool that helps to automate IT tasks. Such task may include install
 
 - [Ansible Project](https://docs.ansible.com)
 - [Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
+- [Patterns - Targeting hosts and groups](https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html)
 
 
 ## Installation
@@ -69,7 +70,10 @@ pyenv install 3.9.6
 pyenv virtualenv 3.9.6 ansible-cookbook
 pyenv activate ansible-cookbook
 
-# Update pip, setuptools and install ansible and Vagrant to Ansible inventory
+# Update pip, setuptools and install:
+# - ansible
+# - vagranttoansible (creates inventory from vagrant environment)
+# - ansible-lint (checks for best practices)
 pip install --upgrade pip setuptools
 pip install -r requirements.txt
 
@@ -355,6 +359,50 @@ ansible-inventory --graph [--vars]
   |  |--@ubuntu:
   |  |  |--192.168.137.137
   |  |  |--192.168.137.245
+```
+
+Another way how to verify the inventory configuration is to use ansible command with `list-hosts` paramter. This command also supports globbing `*`. You can also specify multiple groups or hosts with comma. Indexing and negation is also supported. This is useful when you need to be usre that you are targeting the correct hosts.
+
+```bash
+ansible --list-hosts all
+  hosts (8):
+    localhost
+    sles40
+    rhel30
+    rhel31
+    centos20
+    centos21
+    ubuntu10
+    ubuntu11
+
+ansible --list-hosts "ubuntu*"
+  hosts (2):
+    ubuntu10
+    ubuntu11
+
+ansible --list-hosts vagrant,localhost
+  hosts (5):
+    centos20
+    centos21
+    ubuntu10
+    ubuntu11
+    localhost
+
+# 
+# Note: In zsh you may need to excape [0] as \[0\]
+#
+ansible --list-hosts all[0]
+  hosts (1):
+    ubuntu10
+
+ansible --list-hosts \!ubuntu
+  hosts (6):
+    localhost
+    sles40
+    rhel30
+    rhel31
+    centos20
+    centos21
 ```
 
 
