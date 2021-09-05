@@ -1,0 +1,29 @@
+---
+# Bring stack down
+- hosts: loadbalancer
+  become: yes
+  tasks:
+    - ansible.builtin.service: name=nginx state=stopped
+
+- hosts: webserver
+  become: yes
+  tasks:
+    - ansible.builtin.service: name=apache2 state=stopped
+
+# Restart mysql
+- hosts: database
+  become: yes
+  tasks:
+    - ansible.builtin.service: name=mysql state=restarted
+
+# Bring stack up
+- hosts: webserver
+  become: yes
+  tasks:
+    - ansible.builtin.service: name=apache2 state=started
+
+- hosts: loadbalancer
+  become: yes
+  tasks:
+    - ansible.builtin.service: name=nginx state=started
+  
