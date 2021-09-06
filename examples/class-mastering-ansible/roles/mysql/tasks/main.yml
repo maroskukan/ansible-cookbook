@@ -1,11 +1,11 @@
 ---
 - name: install tools
-  ansible.builtin.apt: name="{{ item }}" state=present update_cache=yes
+  ansible.builtin.apt: name="{{ item }}" state=present
   with_items:
     - python3-pymysql
 
 - name: install mysql-server
-  ansible.builtin.apt: name=mysql-server state=present update_cache=yes
+  ansible.builtin.apt: name=mysql-server state=present
 
 - name: ensure mysql listening on eth0 port
   ansible.builtin.lineinfile: dest=/etc/mysql/mysql.conf.d/mysqld.cnf regexp=^bind-address

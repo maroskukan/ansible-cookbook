@@ -1,6 +1,6 @@
 ---
 - name: install nginx
-  ansible.builtin.apt: name=nginx state=present update_cache=yes
+  ansible.builtin.apt: name=nginx state=present
 
 - name: configure nginx sites
   ansible.builtin.template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/{{ item.key }} mode=0644

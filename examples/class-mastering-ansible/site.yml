@@ -1,4 +1,11 @@
 ---
+- hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: update apt cache
+      ansible.builtin.apt: update_cache=yes cache_valid_time=86400
+
 - include: control.yml
 - include: database.yml
 - include: webserver.yml

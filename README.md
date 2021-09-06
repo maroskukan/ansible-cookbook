@@ -787,6 +787,23 @@ One of the ways to decrease execution time is to disable facts gathering when it
 gather_facts: no
 ```
 
+Depending on module that is being used, an optimization step can be introduced at this level. For example instead of updating apt cache for each role or play, you can do it in the begining and set cache timeout like in example below.
+
+```yml
+---
+- hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: update apt cache
+      ansible.builtin.apt: update_cache=yes cache_valid_time=86400
+
+- include: control.yml
+- include: database.yml
+- include: webserver.yml
+- include: loadbalancer.yml
+```
+
 
 ## Tips
 
