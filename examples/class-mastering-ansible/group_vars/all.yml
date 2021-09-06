@@ -1,4 +1,0 @@
----
-db_name: demo
-db_user: demo
-db_pass: "{{ vault_db_pass }}"
