@@ -656,6 +656,13 @@ For example, a base role could include shared system packages and configuration 
 
 By using variables and encapsulation greatly increases reausability and scalability.
 
+To create a new role skeleton, you can leverage `ansible-galaxy`.
+
+```bash
+ansible-galaxy init control
+- Role control was created successfully
+```
+
 
 ## Ansible Galaxy
 
