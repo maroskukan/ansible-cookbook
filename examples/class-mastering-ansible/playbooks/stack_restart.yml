@@ -4,26 +4,33 @@
   become: yes
   tasks:
     - ansible.builtin.service: name=nginx state=stopped
+    - ansible.builtin.wait_for: port=80 state=drained
 
 - hosts: webserver
   become: yes
   tasks:
     - ansible.builtin.service: name=apache2 state=stopped
+    - ansible.builtin.wait_for: port=80 state=stopped
 
 # Restart mysql
 - hosts: database
   become: yes
   tasks:
     - ansible.builtin.service: name=mysql state=restarted
+    - ansible.builtin.wait_for: port=3306 state=started
+
+
 
 # Bring stack up
 - hosts: webserver
   become: yes
   tasks:
     - ansible.builtin.service: name=apache2 state=started
+    - ansible.builtin.wait_for: port=80
 
 - hosts: loadbalancer
   become: yes
   tasks:
     - ansible.builtin.service: name=nginx state=started
+    - ansible.builtin.wait_for: port=80
   
