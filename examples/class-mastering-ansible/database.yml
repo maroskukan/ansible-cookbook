@@ -1,30 +1,5 @@
 ---
 - hosts: database
   become: yes
-  tasks:
-    - name: install tools
-      ansible.builtin.apt: name="{{ item }}" state=present update_cache=yes
-      with_items:
-        - python3-pymysql
-
-    - name: install mysql-server
-      ansible.builtin.apt: name=mysql-server state=present update_cache=yes
-
-    - name: ensure mysql started
-      ansible.builtin.service: name=mysql state=started enabled=yes
-
-    - name: ensure mysql listening on all ports
-      ansible.builtin.lineinfile: dest=/etc/mysql/mysql.conf.d/mysqld.cnf regexp=^bind-address
-                                  line="bind-address            = 0.0.0.0"
-      notify: restart mysql
-
-
-    - name: create demo database
-      community.mysql.mysql_db: name=demo  login_unix_socket='/var/run/mysqld/mysqld.sock' state=present
-
-    - name: create demo user
-      community.mysql.mysql_user: name=demo login_unix_socket='/var/run/mysqld/mysqld.sock' password=demo priv=demo.*:ALL host='%' state=present
-  
-  handlers:
-    - name: restart mysql
-      ansible.builtin.service: name=mysql state=restarted
+  roles:
+    - mysql
