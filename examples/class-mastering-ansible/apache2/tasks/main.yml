@@ -1,0 +1,17 @@
+---
+- name: install web components
+  ansible.builtin.apt: name="{{ item }}" state=present update_cache=yes
+  with_items:
+    - apache2
+    - libapache2-mod-wsgi-py3
+
+- name: ensure mod_wsgi enabled
+  community.general.apache2_module: name=wsgi state=present
+  notify: restart apache2
+
+- name: de-activate default apache site
+  ansible.builtin.file: path=/etc/apache2/sites-enabled/000-default.conf state=absent
+  notify: restart apache2
+
+- name: ensure apache2 started
+  ansible.builtin.service: name=apache2 state=started enabled=yes
