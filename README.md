@@ -26,6 +26,7 @@
       - [Referencing Variables](#referencing-variables)
       - [Host and Group Variables](#host-and-group-variables)
       - [Protecting Variables](#protecting-variables)
+  - [Roles](#roles)
   - [Ansible Galaxy](#ansible-galaxy)
     - [Gathering information about role](#gathering-information-about-role)
     - [Installing a role](#installing-a-role)
@@ -52,6 +53,7 @@ Ansible is a tool that helps to automate IT tasks. Such task may include install
 - [Modules Intro](https://docs.ansible.com/ansible/latest/user_guide/modules_intro.html)
 - [Modules Index](https://docs.ansible.com/ansible/latest/collections/all_plugins.html)
 - [Patterns - Targeting hosts and groups](https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html)
+- [Roles](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html)
 
 
 ## Installation
@@ -645,6 +647,14 @@ ansible-playbook --vault-id gvars@prompt --vault-id lvars@prompt playbook.yml
 
 If you need to change a password on an encrypted file. You can use the `ansible-vault rekey <filename>` option.
 
+
+## Roles
+
+Ansible role is a folder that containes tasks, files, tempaltes, handlers, variables and playbooks to achieve desired state. 
+
+For example, a base role could include shared system packages and configuration which can be applied to all targets. A service specific role (web, app, db) can be applied to only selected ones.
+
+By using variables and encapsulation greatly increases reausability and scalability.
 
 
 ## Ansible Galaxy
