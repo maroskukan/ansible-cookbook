@@ -34,6 +34,7 @@
     - [Listing installed collections](#listing-installed-collections)
   - [Ansible Console](#ansible-console)
   - [Ansible Pull](#ansible-pull)
+  - [Execution](#execution)
   - [Tips](#tips)
     - [Creating Command Aliases](#creating-command-aliases)
     - [Gathering Facts](#gathering-facts)
@@ -758,6 +759,34 @@ user.name=Maros
 A decentralized mode of operations, where self-manage nodes have scheduled job to pull playbookf from central VCS and execute it using local ansible installation.
 
 Full documentation on this feature can be found [here](https://docs.ansible.com/ansible/latest/cli/ansible-pull.html)
+
+
+## Execution
+
+Ansible playbook execution can be optimized number of ways. In order to get a baseline measure your current execution time.
+
+```Note: you can located these playbooks in examples/class-mastering-ansible```
+
+```bash
+time ansible-playbook site.yml
+...
+[Output omitted for brevity]
+...
+15.24s user 3.77s system 37% cpu 50.348 total
+
+time ansible-playbook stack_status.yml
+...
+[Output omitted for brevity]
+...
+6.83s user 1.72s system 53% cpu 16.042 total
+```
+
+One of the ways to decrease execution time is to disable facts gathering when it is not used.
+
+```yml
+gather_facts: no
+```
+
 
 ## Tips
 
