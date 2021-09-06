@@ -16,7 +16,7 @@ def dbtest():
   try:
       db.create_all()
   except Exception as e:
-      return e.message + '\n'
+      return str(e) + '\n'
   return 'Database Connected from %s!\n' % hostname
 
 if __name__ == '__main__':
