@@ -7,11 +7,17 @@
   with_dict: "{{ sites }}"
   notify: restart nginx
 
-- name: de-activate default nginx site
-  ansible.builtin.file: path=/etc/nginx/sites-enabled/default state=absent
+- name: get active sites
+  ansible.builtin.shell: ls -1 /etc/nginx/sites-enabled
+  register: active
+
+- name: de-activate sites
+  ansible.builtin.file: path=/etc/nginx/sites-enabled/{{ item }} state=absent
+  loop: "{{ active.stdout_lines }}"
+  when: item not in sites
   notify: restart nginx
 
-- name: activate demo sites
+- name: activate sites
   ansible.builtin.file: src=/etc/nginx/sites-available/{{ item.key }} dest=/etc/nginx/sites-enabled/{{ item.key }} state=link
   with_dict: "{{ sites }}"
   notify: restart nginx
