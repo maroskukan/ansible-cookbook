@@ -7,9 +7,9 @@
 - name: install mysql-server
   ansible.builtin.apt: name=mysql-server state=present update_cache=yes
 
-- name: ensure mysql listening on all ports
+- name: ensure mysql listening on eth0 port
   ansible.builtin.lineinfile: dest=/etc/mysql/mysql.conf.d/mysqld.cnf regexp=^bind-address
-                              line="bind-address            = 0.0.0.0"
+                              line="bind-address            = {{ ansible_eth0.ipv4.address }}"
   notify: restart mysql
 
 - name: ensure mysql started

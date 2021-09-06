@@ -776,6 +776,8 @@ Once new aliases are loaded simple source the modified file `source ~/.zshrc` an
 
 ### Gathering Facts
 
+Facts are useful when you need to gather information about particular target which can be reaused in later steps of the playbook.
+
 Gathering Facts about localhost
 ```bash
 ansible -m setup localhost

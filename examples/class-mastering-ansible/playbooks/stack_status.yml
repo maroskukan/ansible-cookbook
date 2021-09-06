@@ -24,7 +24,7 @@
       ansible.builtin.command: service mysql status
 
     - name: verify mysql is listening on 3306
-      ansible.builtin.wait_for: port=3306 timeout=1
+      ansible.builtin.wait_for: host={{ ansible_eth0.ipv4.address }} port=3306 timeout=1
 
 
 # When control node name resolution is not set, it is required to access by IP Address
