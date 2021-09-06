@@ -9,6 +9,10 @@
   ansible.builtin.copy: src=demo/app/ dest=/var/www/demo mode=0755
   notify: restart apache2
 
+- name: copy demo.wsgi
+  ansible.builtin.template: src=demo.wsgi.j2 dest=/var/www/demo/demo.wsgi mode=0755
+  notify: restart apache2
+
 - name: copy apache virtual host config
   ansible.builtin.copy: src=demo/demo.conf dest=/etc/apache2/sites-available mode=0755
   notify: restart apache2
