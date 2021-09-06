@@ -2,16 +2,18 @@
 - name: install nginx
   ansible.builtin.apt: name=nginx state=present update_cache=yes
 
-- name: configure nginx site
-  ansible.builtin.template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/demo mode=0644
+- name: configure nginx sites
+  ansible.builtin.template: src=nginx.conf.j2 dest=/etc/nginx/sites-available/{{ item.key }} mode=0644
+  with_dict: "{{ sites }}"
   notify: restart nginx
 
 - name: de-activate default nginx site
   ansible.builtin.file: path=/etc/nginx/sites-enabled/default state=absent
   notify: restart nginx
 
-- name: activate demo nginx site
-  ansible.builtin.file: src=/etc/nginx/sites-available/demo dest=/etc/nginx/sites-enabled/demo state=link
+- name: activate demo sites
+  ansible.builtin.file: src=/etc/nginx/sites-available/{{ item.key }} dest=/etc/nginx/sites-enabled/{{ item.key }} state=link
+  with_dict: "{{ sites }}"
   notify: restart nginx
 
 - name: ensure nginx started
