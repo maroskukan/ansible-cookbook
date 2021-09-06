@@ -54,7 +54,7 @@ Ansible is a tool that helps to automate IT tasks. Such task may include install
 - [Modules Index](https://docs.ansible.com/ansible/latest/collections/all_plugins.html)
 - [Patterns - Targeting hosts and groups](https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html)
 - [Roles](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html)
-
+- [Using Variables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html)
 
 ## Installation
 
