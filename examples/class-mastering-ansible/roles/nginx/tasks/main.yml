@@ -12,6 +12,7 @@
 - name: get active sites
   ansible.builtin.shell: ls -1 /etc/nginx/sites-enabled
   register: active
+  #changed_when: "active.stdout_lines != sites.keys()"
   tags: [ 'configure' ]
 
 - name: de-activate sites
