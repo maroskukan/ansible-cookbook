@@ -40,6 +40,9 @@
     - [Limit](#limit)
     - [Tags](#tags)
     - [Pipelining](#pipelining)
+  - [Troubleshooting](#troubleshooting)
+    - [Ordering problems](#ordering-problems)
+    - [Jumping to specific tasks](#jumping-to-specific-tasks)
   - [Tips](#tips)
     - [Creating Command Aliases](#creating-command-aliases)
     - [Gathering Facts](#gathering-facts)
@@ -886,6 +889,74 @@ Pipelining reduces the number of operations that SSH needs to perform during con
 ...
 [ssh_connection]
 pipelining = True
+```
+
+
+## Troubleshooting
+
+### Ordering problems
+
+When you initial write a playbook, you likely start by installing packages and ensuring that the service is started.
+
+However, as you add more service configuration it is required to reconsider placement of initial tasks such as service start close to end of the playbook, so the changes to configuration files are picked up. 
+
+### Jumping to specific tasks
+
+When you troubleshoot a specific tasks it is feasible to focus just on that particular section. You could comment out the rest of the playbook or take advantage of `list-tasks` and `start-at-task` argument.
+
+
+```bash
+ansible-playbook site.yml --list-tasks
+ap site.yml --list-tasks
+
+playbook: site.yml
+
+  play #1 (all): all    TAGS: []
+    tasks:
+      update apt cache  TAGS: [packages]
+
+  play #2 (control): control    TAGS: []
+    tasks:
+      control : install tools   TAGS: [packages]
+
+  play #3 (database): database  TAGS: []
+    tasks:
+      mysql : install tools     TAGS: [packages]
+      mysql : install mysql-server      TAGS: [packages]
+      mysql : ensure mysql listening on eth0 port       TAGS: [configure]
+      mysql : ensure mysql started      TAGS: [service]
+      mysql : create database   TAGS: [configure]
+      mysql : create demo user  TAGS: [configure]
+
+  play #4 (webserver): webserver        TAGS: []
+    tasks:
+      apache2 : install web components  TAGS: [packages]
+      apache2 : ensure mod_wsgi enabled TAGS: [configure]
+      apache2 : de-activate default apache site TAGS: [configure]
+      apache2 : ensure apache2 started  TAGS: [service]
+      demo_app : install web components TAGS: [packages]
+      demo_app : copy demo app source   TAGS: [configure]
+      demo_app : copy demo.wsgi TAGS: [configure]
+      demo_app : copy apache virtual host config        TAGS: [configure]
+      demo_app : setup python virtualenv        TAGS: [system]
+      demo_app : activate demo apache site      TAGS: [configure]
+
+  play #5 (loadbalancer): loadbalancer  TAGS: []
+    tasks:
+      nginx : install nginx     TAGS: [packages]
+      nginx : configure nginx sites     TAGS: [configure]
+      nginx : get active sites  TAGS: [configure]
+      nginx : de-activate sites TAGS: [configure]
+      nginx : activate sites    TAGS: [configure]
+      nginx : ensure nginx started      TAGS: [service]
+```
+
+You can also use `--step` argument to go over each task of the play answering whether you want to run it or not run it.
+
+```bash
+ansible-playbook site.yml --step
+PLAY [all] *********************************************************************
+Perform task: TASK: update apt cache (N)o/(y)es/(c)ontinue: Y
 ```
 
 
