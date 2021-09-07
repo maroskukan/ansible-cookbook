@@ -3,20 +3,26 @@
   ansible.builtin.apt: name="{{ item }}" state=present
   with_items:
     - python3-pymysql
+  tags: [ 'packages' ]
 
 - name: install mysql-server
   ansible.builtin.apt: name=mysql-server state=present
+  tags: [ 'packages' ]
 
 - name: ensure mysql listening on eth0 port
   ansible.builtin.lineinfile: dest=/etc/mysql/mysql.conf.d/mysqld.cnf regexp=^bind-address
                               line="bind-address            = {{ ansible_eth0.ipv4.address }}"
   notify: restart mysql
+  tags: [ 'configure' ]
 
 - name: ensure mysql started
   ansible.builtin.service: name=mysql state=started enabled=yes
-
+  tags: [ 'service' ]
+  
 - name: create database
   community.mysql.mysql_db: name={{ db_name }}  login_unix_socket='/var/run/mysqld/mysqld.sock' state=present
+  tags: [ 'configure' ]
 
 - name: create demo user
   community.mysql.mysql_user: name={{ db_user_name }} password={{ db_user_pass }} priv={{ db_name }}.*:ALL host='{{ db_user_host }}' login_unix_socket='/var/run/mysqld/mysqld.sock' state=present
+  tags: [ 'configure' ]

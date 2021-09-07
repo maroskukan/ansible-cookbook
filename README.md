@@ -35,6 +35,10 @@
   - [Ansible Console](#ansible-console)
   - [Ansible Pull](#ansible-pull)
   - [Execution](#execution)
+    - [Facts gathering](#facts-gathering)
+    - [Module arguments](#module-arguments)
+    - [Limit](#limit)
+    - [Tags](#tags)
   - [Tips](#tips)
     - [Creating Command Aliases](#creating-command-aliases)
     - [Gathering Facts](#gathering-facts)
@@ -781,11 +785,16 @@ time ansible-playbook stack_status.yml
 6.83s user 1.72s system 53% cpu 16.042 total
 ```
 
+### Facts gathering
+
 One of the ways to decrease execution time is to disable facts gathering when it is not used.
 
 ```yml
 gather_facts: no
 ```
+
+
+### Module arguments
 
 Depending on module that is being used, an optimization step can be introduced at this level. For example instead of updating apt cache for each role or play, you can do it in the begining and set cache timeout like in example below.
 
@@ -802,6 +811,67 @@ Depending on module that is being used, an optimization step can be introduced a
 - include: database.yml
 - include: webserver.yml
 - include: loadbalancer.yml
+```
+
+### Limit
+
+If need to target only particular host or group instead of the ones defined in playbook, you can use the `--limit` or `-l` argument.
+
+```bash
+ansible-playbook site.yml -l app01
+```
+
+### Tags
+
+Tags can be used to selectively run particular tasks or set of tasks. 
+
+Start by defining a tag for particular task inside playbook.
+
+```yml
+---
+- name: install tools
+  ansible.builtin.apt: name="{{ item }}" state=present
+  with_items:
+    - curl
+  tags: ['packages']
+```
+
+To list available tasks in playbook(s) use the `--list-tags` argument.
+
+```bash
+ansible-playbook site.yml --list-tags
+playbook: site.yml
+
+  play #1 (all): all    TAGS: []
+      TASK TAGS: [packages]
+
+  play #2 (control): control    TAGS: []
+      TASK TAGS: [packages]
+
+  play #3 (database): database  TAGS: []
+      TASK TAGS: [configure, packages, service]
+
+  play #4 (webserver): webserver        TAGS: []
+      TASK TAGS: [configure, packages, service, system]
+
+  play #5 (loadbalancer): loadbalancer  TAGS: []
+      TASK TAGS: [configure, packages, service]
+```
+
+To run this tagged task(s).
+
+```bash
+ansible-playbook site.yml --tags "packages"
+```
+
+To run all tasks except the one with tag.
+
+```bash
+time ansible-playbook site.yml --skip-tags "packages"
+...
+[Output omitted for brevity]
+...
+11.33s user 2.77s system 49% cpu 28.544 total
 ```
 
 

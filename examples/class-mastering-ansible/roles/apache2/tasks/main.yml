@@ -4,14 +4,18 @@
   with_items:
     - apache2
     - libapache2-mod-wsgi-py3
+  tags: [ 'packages' ]
 
 - name: ensure mod_wsgi enabled
   community.general.apache2_module: name=wsgi state=present
   notify: restart apache2
+  tags: [ 'configure' ]
 
 - name: de-activate default apache site
   ansible.builtin.file: path=/etc/apache2/sites-enabled/000-default.conf state=absent
   notify: restart apache2
+  tags: [ 'configure' ]
 
 - name: ensure apache2 started
   ansible.builtin.service: name=apache2 state=started enabled=yes
+  tags: [ 'service' ]

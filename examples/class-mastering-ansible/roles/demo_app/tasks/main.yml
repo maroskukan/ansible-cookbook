@@ -4,23 +4,29 @@
   with_items:
     - python3-pip
     - python3-virtualenv
+  tags: [ 'packages' ]
 
 - name: copy demo app source
   ansible.builtin.copy: src=demo/app/ dest=/var/www/demo mode=0755
   notify: restart apache2
+  tags: [ 'configure' ]
 
 - name: copy demo.wsgi
   ansible.builtin.template: src=demo.wsgi.j2 dest=/var/www/demo/demo.wsgi mode=0755
   notify: restart apache2
+  tags: [ 'configure' ]
 
 - name: copy apache virtual host config
   ansible.builtin.copy: src=demo/demo.conf dest=/etc/apache2/sites-available mode=0755
   notify: restart apache2
+  tags: [ 'configure' ]
 
 - name: setup python virtualenv
   ansible.builtin.pip: requirements=/var/www/demo/requirements.txt virtualenv=/var/www/demo/.venv
   notify: restart apache2
+  tags: [ 'system' ]
 
 - name: activate demo apache site
   ansible.builtin.file: src=/etc/apache2/sites-available/demo.conf dest=/etc/apache2/sites-enabled/demo.conf state=link
   notify: restart apache2
+  tags: [ 'configure' ]
