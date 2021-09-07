@@ -15,8 +15,6 @@
   #changed_when: "active.stdout_lines != sites.keys()"
   tags: [ 'configure' ]
 
-- ansible.builtin.debug: var=active.stdout_lines
-
 - name: de-activate sites
   ansible.builtin.file: path=/etc/nginx/sites-enabled/{{ item }} state=absent
   loop: "{{ active.stdout_lines }}"
