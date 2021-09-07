@@ -70,6 +70,8 @@ Ansible is a tool that helps to automate IT tasks. Such task may include install
 - [Using Variables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html)
 - [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)
 - [SSH Pipelining](https://docs.ansible.com/ansible/2.4/intro_configuration.html#pipelining)
+- [Yaml](https://yaml.org/)
+- [Jinja](https://jinja.palletsprojects.com/en/3.0.x/)
 
 
 ## Installation
