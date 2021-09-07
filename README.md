@@ -44,6 +44,8 @@
     - [Ordering problems](#ordering-problems)
     - [Jumping to specific tasks](#jumping-to-specific-tasks)
     - [Retry Failed Hosts](#retry-failed-hosts)
+    - [Syntax Check](#syntax-check)
+    - [Dry-run](#dry-run)
   - [Tips](#tips)
     - [Creating Command Aliases](#creating-command-aliases)
     - [Gathering Facts](#gathering-facts)
@@ -970,6 +972,20 @@ When a host is unreachable during playbook execution, it is possible to retry th
 
 ```bash
 ansible-playbook site.yml --limit @/home/ansible.site.retry
+```
+
+### Syntax Check
+
+Static syntax analysis is available using `--syntax-check` argument.
+
+```bash
+ansible-playbook --syntax-check site.yml
+```
+
+### Dry-run
+
+```bash
+ansible-playbook --check site.yml
 ```
 
 
