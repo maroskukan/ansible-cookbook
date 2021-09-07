@@ -40,12 +40,13 @@
     - [Limit](#limit)
     - [Tags](#tags)
     - [Pipelining](#pipelining)
-  - [Troubleshooting](#troubleshooting)
+  - [Troubleshooting, Testing and Validation](#troubleshooting-testing-and-validation)
     - [Ordering problems](#ordering-problems)
     - [Jumping to specific tasks](#jumping-to-specific-tasks)
     - [Retry Failed Hosts](#retry-failed-hosts)
     - [Syntax Check](#syntax-check)
     - [Dry-run](#dry-run)
+    - [Debugging](#debugging)
   - [Tips](#tips)
     - [Creating Command Aliases](#creating-command-aliases)
     - [Gathering Facts](#gathering-facts)
@@ -895,7 +896,7 @@ pipelining = True
 ```
 
 
-## Troubleshooting
+## Troubleshooting, Testing and Validation
 
 ### Ordering problems
 
@@ -986,6 +987,33 @@ ansible-playbook --syntax-check site.yml
 
 ```bash
 ansible-playbook --check site.yml
+```
+
+### Debugging
+
+The debug module can be used to display data at transient state.
+
+```yml
+- ansible.builtin.debug: var=active.stdout_lines
+```
+
+```yml
+- ansible.builtin.debug: var=vars
+```
+
+The execute the playbook as usual.
+
+```bash
+ansible-playbook site.yml --limit lb01 --start-at-task "get active sites"
+[Output omitted for brevity]
+...
+TASK [nginx : ansible.builtin.debug] ************************************************************************
+ok: [lb01] => {
+    "active.stdout_lines": [
+        "myapp"
+    ]
+}
+...
 ```
 
 
