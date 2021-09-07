@@ -39,6 +39,7 @@
     - [Module arguments](#module-arguments)
     - [Limit](#limit)
     - [Tags](#tags)
+    - [Pipelining](#pipelining)
   - [Tips](#tips)
     - [Creating Command Aliases](#creating-command-aliases)
     - [Gathering Facts](#gathering-facts)
@@ -61,6 +62,8 @@ Ansible is a tool that helps to automate IT tasks. Such task may include install
 - [Roles](https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html)
 - [Using Variables](https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html)
 - [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)
+- [SSH Pipelining](https://docs.ansible.com/ansible/2.4/intro_configuration.html#pipelining)
+
 
 ## Installation
 
@@ -872,6 +875,17 @@ time ansible-playbook site.yml --skip-tags "packages"
 [Output omitted for brevity]
 ...
 11.33s user 2.77s system 49% cpu 28.544 total
+```
+
+
+### Pipelining
+
+Pipelining reduces the number of operations that SSH needs to perform during connection setup. By default it is disabled but can be overided in `ansible.cfg`. There are some system prerequisites though.
+
+```ini
+...
+[ssh_connection]
+pipelining = True
 ```
 
 
