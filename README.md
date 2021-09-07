@@ -43,6 +43,7 @@
   - [Troubleshooting](#troubleshooting)
     - [Ordering problems](#ordering-problems)
     - [Jumping to specific tasks](#jumping-to-specific-tasks)
+    - [Retry Failed Hosts](#retry-failed-hosts)
   - [Tips](#tips)
     - [Creating Command Aliases](#creating-command-aliases)
     - [Gathering Facts](#gathering-facts)
@@ -951,12 +952,24 @@ playbook: site.yml
       nginx : ensure nginx started      TAGS: [service]
 ```
 
+```bash
+ansible-playbook site.yml --start-at-task "copy demo app source"
+```
+
 You can also use `--step` argument to go over each task of the play answering whether you want to run it or not run it.
 
 ```bash
 ansible-playbook site.yml --step
 PLAY [all] *********************************************************************
 Perform task: TASK: update apt cache (N)o/(y)es/(c)ontinue: Y
+```
+
+### Retry Failed Hosts
+
+When a host is unreachable during playbook execution, it is possible to retry the play. Ansible will creare a   `*.retry` file that will contains affect hosts.
+
+```bash
+ansible-playbook site.yml --limit @/home/ansible.site.retry
 ```
 
 
