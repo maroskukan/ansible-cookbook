@@ -53,6 +53,7 @@
     - [Generating dynamic inventory](#generating-dynamic-inventory)
     - [Loading private keys](#loading-private-keys)
     - [Application Configuration Pillars](#application-configuration-pillars)
+    - [Project Layout](#project-layout)
 
 
 ## Introduction
@@ -1024,7 +1025,7 @@ ok: [lb01] => {
 
 ### Creating Command Aliases
 
-Add this to your shell rc file, e.g. `~/.zshrc`
+Add this to your shell rc file, e.g. `~/.zshrc` or if you use oh-my-zsh framework edit the `~/.oh-my-zsh/custom/aliases.zsh` file.
 
 ```bash
 # Ansible aliases
@@ -1075,3 +1076,40 @@ Any application deployment can be broken down into four pillars or stages.
 2. Service Handlers - Such as scripts, init.d, systemd, they may be already included with software package
 3. System Configuration - Such as user permissions, firewall rules and any state that is required
 4. Software Configuration - Such as appication configuration and content files.
+
+### Project Layout
+
+When it comes to organizing files inside a project, you have number of options. Some of them are desribed in [Ansible Documetation](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html).
+
+Below you can find a sample structure that separates environments, vars, roles, playbooks and configuration.
+
+```bash
+├── ansible.cfg
+├── site.yml
+├── lb.yml
+├── app.yml
+├── db.yml
+├── systems.yml
+├── update.yml
+├── environments
+│   ├── dev
+│   └── prod
+├── group_vars
+│   ├── all
+│   │   ├── vars
+│   │   └── vault
+│   ├── dev
+│   └── prod
+└── roles
+    ├── myapp
+    ├── apache2
+    └── mysql
+        ├── defaults
+        ├── files
+        ├── handlers
+        ├── meta
+        ├── tasks
+        ├── templates
+        ├── tests
+        └── vars
+```
