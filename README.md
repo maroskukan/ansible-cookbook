@@ -132,7 +132,29 @@ The behavior of Ansible installation can be adjusted by modifying settings in An
 
 To verify which location of ansible configuraiton file is being used when calling ansible commands, use the `ansible --version` command. 
 
-To verify the content of ansible configuration file that is being used, use the `ansible-config view` command.
+To verify the content of ansible configuration file that is being used, use the `ansible-config view` command. One example of such configuration file is displayed below:
+
+```ini
+[defaults]
+remote_user = devops
+inventory = environments/prod
+retry_files_save_path = /tmp
+host_key_checking = False
+log_path=~/ansible.log
+```
+
+To display full configuration, including defaults, you can use the `ansible-config dump` command.
+
+```bash
+ACTION_WARNINGS(default) = True
+AGNOSTIC_BECOME_PROMPT(default) = True
+ALLOW_WORLD_READABLE_TMPFILES(default) = False
+ANSIBLE_CONNECTION_PATH(default) = None
+ANSIBLE_COW_PATH(default) = None
+ANSIBLE_COW_SELECTION(default) = default
+ANSIBLE_COW_WHITELIST(default) = ['bud-frogs', 'bunny', 'cheese', 'daemon', 'default', 'dragon']
+ANSIBLE_FORCE_COLOR(default) = False
+```
 
 ### Settings Management
 
