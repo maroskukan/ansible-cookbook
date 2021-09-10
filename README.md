@@ -323,6 +323,33 @@ Swap:       7340032           0     7340032
 
 Using the shell module which supports piping, you can filter ouput at target node.
 
+As mentioned in the beginning these modules are not idempotent by design. For example when you invoke the command module with following paramaters, the initial execution will create a directory but the next one will fail.
+
+```bash
+ansible app -m command -a "mkdir /tmp/dir1"
+app2 | CHANGED | rc=0 >>
+
+app1 | CHANGED | rc=0 >>
+```
+
+```bash
+ansible app -m command -a "mkdir /tmp/dir1"
+app2 | FAILED | rc=1 >>
+mkdir: cannot create directory '/tmp/dir1': File existsnon-zero return code
+app1 | FAILED | rc=1 >>
+mkdir: cannot create directory '/tmp/dir1': File existsnon-zero return code
+```
+
+To overcome this issues, you can add `creates` option.
+
+```bash
+ansible app -m command -a "mkdir /tmp/dir1 creates=/tmp/dir1" 
+app1 | SUCCESS | rc=0 >>
+skipped, since /tmp/dir1 exists
+app2 | SUCCESS | rc=0 >>
+skipped, since /tmp/dir1 exists
+```
+
 
 ## Ad Hoc Mode
 
