@@ -282,13 +282,46 @@ Some common ansible modules include:
   - `nmcli` Manage networking
   - `uri` Interact with web services and comminicate with APIs
 
+To list all installed modules, you can use `ansible-doc --list` command.
+
 ### Command Modules
 
 There are a handful of modules that run commands directly on the manage host. You can use these if no other module is available to do what you need. They are **not idempotent** you must make sure that they are safe to run twice when using them. An example of such modules are:
 
-- `command` runs a single command on the system
+- `command` runs a single command on the system, does not use shell, does not have access to env
 - `shell` runs a command on the remote system's shell (redirection to other features work)
 - `raw` simply run a command with no processing (can be dangerous but can be useful when managing systems that cannot have Python installed (for example legacy network equipment)
+- `script` - runs a local script on a remote node after transfering it
+- `expect` - executes a command and responds to prompts
+- `telnet` - executes a low-down and dirty telnet command
+
+An example comparising between `command` and `shell` modules can be found below.
+
+```bash
+ansible prod -m command -a "free" | grep -i swap
+Swap:       7340032           0     7340032
+Swap:       7340032           0     7340032
+Swap:       7340032           0     7340032
+Swap:       7340032           0     7340032
+```
+
+In above example, the piping happens on control node as the command modules does not support piping.
+
+```bash
+ansible prod -m shell -a "free | grep -i swap"  
+[WARNING]: Found both group and host with same name: db
+[WARNING]: Found both group and host with same name: lb
+app2 | CHANGED | rc=0 >>
+Swap:       7340032           0     7340032
+db | CHANGED | rc=0 >>
+Swap:       7340032           0     7340032
+app1 | CHANGED | rc=0 >>
+Swap:       7340032           0     7340032
+lb | CHANGED | rc=0 >>
+Swap:       7340032           0     7340032
+```
+
+Using the shell module which supports piping, you can filter ouput at target node.
 
 
 ## Ad Hoc Mode
@@ -436,7 +469,7 @@ ansible --list-hosts vagrant,localhost
     localhost
 
 # 
-# Note: In zsh you may need to excape [0] as \[0\]
+# Note: In zsh you may need to excape [0] as \[0\] or use quotation ''
 #
 ansible --list-hosts all[0]
   hosts (1):
@@ -450,6 +483,8 @@ ansible --list-hosts \!ubuntu
     rhel31
     centos20
     centos21
+
+ansible --list-hosts '!ubuntu'
 ```
 
 
