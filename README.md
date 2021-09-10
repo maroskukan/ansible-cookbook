@@ -75,6 +75,7 @@ Ansible is a tool that helps to automate IT tasks. Such task may include install
 - [Jinja](https://jinja.palletsprojects.com/en/3.0.x/)
 - [Ansible Best Practices Essentials](https://www.ansible.com/blog/ansible-best-practices-essentials)
 - [Ansible Best Practices](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html)
+- [Mastering loops with j2 templates](https://www.redhat.com/sysadmin/ansible-jinja)
 
 ## Installation
 
