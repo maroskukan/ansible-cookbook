@@ -1,3 +1,4 @@
+.vscode/*
 # General
 .vagrant/
 inventory/vagrant-hosts
