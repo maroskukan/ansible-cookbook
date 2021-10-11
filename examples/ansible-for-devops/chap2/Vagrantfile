@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "hyperv" do |h|
+    h.enable_virtualization_extensions = true
+    h.linked_clone = true
+    h.memory = 4096
+    h.maxmemory = 4096
+  end
+
+  config.vm.box = "generic/centos7"
+  config.vm.network "public_network", bridge: "Default Switch"
+
+  config.vm.define "server" do |server|
+    server.vm.hostname = "server"
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "playbook.yml"
+  end
+end
