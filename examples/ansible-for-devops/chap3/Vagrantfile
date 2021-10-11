@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "hyperv" do |h|
+    h.enable_virtualization_extensions = true
+    h.linked_clone = true
+    h.memory = 512
+    h.maxmemory = 512
+  end
+
+  config.vm.box = "generic/centos7"
+  config.vm.network "public_network", bridge: "Default Switch"
+  config.ssh.insert_key = false
+
+  # App server 1
+  config.vm.define "app1" do |app|
+    app.vm.hostname = "orc-app1.test"
+  end
+
+  # App server 2
+  config.vm.define "app2" do |app|
+    app.vm.hostname = "orc-app2.test"
+  end
+
+  # Db server
+  config.vm.define "db" do |db|
+    db.vm.hostname = "orc-db.test"
+  end
+end
