@@ -1,15 +1,22 @@
 ---
 - hosts: all
-  become: yes
+  become: true
   tasks:
-    - name: Ensure NTP is installed
-      ansible.builtin.yum: name=ntp state=present
+    - name: Ensure chrony is installed
+      ansible.builtin.yum:
+        name: chrony
+        state: present
 
-    - name: Ensure NTP is installed (always reports changed)
+    - name: Ensure chrony is installed (without changed_when always reports changed)
       ansible.builtin.shell: |
-        if ! rpm -qa | grep -qw ntp; then
-          yum install -y ntp
+        set -o pipefail
+        if ! rpm -qa | grep -qw chrony; then
+          yum install -y chrony
         fi
+      changed_when: false
 
-    - name: Ensure NTP is running
-      ansible.builtin.service: name=ntpd state=started enabled=yes
+    - name: Ensure chrony is running
+      ansible.builtin.service:
+        name: chronyd
+        state: started
+        enabled: true

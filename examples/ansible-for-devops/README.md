@@ -3,6 +3,7 @@
 - [Ansible for Devops](#ansible-for-devops)
   - [Documentation](#documentation)
   - [Book Notes](#book-notes)
+    - [Chapter 1](#chapter-1)
     - [Chapter 2](#chapter-2)
     - [Chapter 3](#chapter-3)
 ## Documentation
@@ -13,6 +14,13 @@
 
 ## Book Notes
 
+### Chapter 1
+
+My preferered way of installing ansible is using pip within a virtual environment.
+
+```bash
+pip install ansible
+```
 ### Chapter 2
 
 Vagrant file can be used for quick VM provisioning using ansible.
