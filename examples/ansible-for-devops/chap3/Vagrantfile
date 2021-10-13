@@ -12,6 +12,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "generic/centos7"
   config.vm.network "public_network", bridge: "Default Switch"
   config.ssh.insert_key = false
+  config.hostmanager.enabled = true
 
   # App server 1
   config.vm.define "app1" do |app|

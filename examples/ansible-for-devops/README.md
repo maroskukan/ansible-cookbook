@@ -11,7 +11,7 @@
 - [Creating Custom Dynamic Inventories](https://www.jeffgeerling.com/blog/creating-custom-dynamic-inventories-ansible)
 - [Ansible Vagrant Dynamic Inventory](https://charlesreid1.com/wiki/Ansible/Vagrant/Dynamic_Inventory)
 - [Ansible YAML Callback plugin for better CLI experience](https://www.jeffgeerling.com/blog/2018/use-ansibles-yaml-callback-plugin-better-cli-experience)
-
+- [Centos 7 Default Python Interpreter](https://britishgeologicalsurvey.github.io/devops/centos7-python2-end-of-life/)
 ## Book Notes
 
 ### Chapter 1
