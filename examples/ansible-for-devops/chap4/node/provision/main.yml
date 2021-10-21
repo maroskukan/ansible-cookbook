@@ -1,0 +1,70 @@
+---
+- hosts: all
+  become: true
+
+  vars:
+    node_apps_location: /usr/local/opt/node
+
+  tasks:
+    - name: Install EPEL repo.
+      ansible.builtin.yum:
+        name: epel-release
+        state: present
+
+    - name: Import Remi GPG key.
+      ansible.builtin.rpm_key:
+        key: "https://rpms.remirepo.net/RPM-GPG-KEY-remi2018"
+        state: present
+
+    - name: Install Remi repo.
+      ansible.builtin.yum:
+        name: "https://rpms.remirepo.net/enterprise/remi-release-8.rpm"
+        state: present
+
+    - name: Ensure firewalld is stopped (since this is for testing).
+      ansible.builtin.service:
+        name: firewalld
+        state: stopped
+
+    - name: Install Node.js and npm.
+      ansible.builtin.yum:
+        name: npm
+        state: present
+        enablerepo: epel
+
+    - name: Install Forever (to run our Node.js app).
+      ansible.builtin.npm:
+        name: forever
+        global: true
+        state: present
+
+    - name: Create a symlink for forever.
+      ansible.builtin.file:
+        src: /usr/local/bin/forever
+        dest: /usr/bin/forever
+        state: link
+
+    - name: Ensure Node.js app folder exists.
+      ansible.builtin.file:
+        path: "{{ node_apps_location }}"
+        state: directory
+
+    - name: Copy example Node.js app to server.
+      ansible.builtin.copy:
+        src: app
+        dest: "{{ node_apps_location }}"
+
+    - name: Install app dependencies defined in package.json.
+      ansible.builtin.npm:
+        path: "{{ node_apps_location }}/app"
+
+    - name: Check list of running Node.js apps.
+      ansible.builtin.command: >
+        forever list
+      register: forever_list
+      changed_when: false
+
+    - name: Start example Node.js app.
+      ansible.builtin.command: >
+        forever start {{ node_apps_location }}/app/app.js
+      when: "forever_list.stdout.find(node_apps_location + '/app/app.js') == -1"
