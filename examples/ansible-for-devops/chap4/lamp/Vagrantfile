@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "hyperv" do |h|
+    h.enable_virtualization_extensions = true
+    h.linked_clone = true
+    h.memory = 1024
+    h.maxmemory = 1024
+  end
+
+  config.vm.box = "generic/ubuntu2004"
+  config.vm.hostname = "lamp.test"
+  config.vm.network "public_network", bridge: "Default Switch"
+  config.ssh.insert_key = false
+
+  # Ansible provisioner.
+  config.vm.provision :ansible do |ansible|
+    ansible.playbook = "provision/main.yml"
+  end
+end
