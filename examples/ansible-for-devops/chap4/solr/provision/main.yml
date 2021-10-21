@@ -7,37 +7,37 @@
 
   pre_tasks:
     - name: Update apt cache if needed.
-      ansible.builtin.apt:
+      apt:
         update_cache: true
         cache_valid_time: 3600
 
   handlers:
     - name: Restart solr
-      ansible.builtin.service:
+      service:
         name: solr
         state: restarted
 
   tasks:
     - name: Install Java.
-      ansible.builtin.apt:
-        name: openjdk-8-jdk
+      apt:
+        name: openjdk-11-jdk
         state: present
 
     - name: Download Solr.
-      ansible.builtin.get_url:
+      get_url:
         url: "https://dlcdn.apache.org/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz"
         dest: "{{ download_dir }}/solr-{{ solr_version }}.tgz"
         checksum: "{{ solr_checksum }}"
 
     - name: Expand Solr.
-      ansible.builtin.unarchive:
+      unarchive:
         src: "{{ download_dir }}/solr-{{ solr_version }}.tgz"
         dest: "{{ download_dir }}"
         remote_src: true
         creates: "{{ download_dir }}/solr-{{ solr_version }}/README.txt"
 
     - name: Run Solr installation script.
-      ansible.builtin.command: >
+      command: >
         {{ download_dir }}/solr-{{ solr_version }}/bin/install_solr_service.sh
         {{ download_dir }}/solr-{{ solr_version }}.tgz
         -i /opt
@@ -48,7 +48,7 @@
         creates={{ solr_dir }}/bin/solr
 
     - name: Ensure solr is started and enabled at boot.
-      ansible.builtin.service:
+      service:
         name: solr
         state: started
         enabled: true
