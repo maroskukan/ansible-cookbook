@@ -10,13 +10,10 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.box = "generic/centos7"
+  config.vm.hostname = "server"
   config.vm.network "public_network", bridge: "Default Switch"
 
-  config.vm.define "server" do |server|
-    server.vm.hostname = "server"
-  end
-
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbook.yml"
+    ansible.playbook = "provision/main.yml"
   end
 end
