@@ -1,0 +1,35 @@
+---
+- name: Testing variables
+  hosts: all
+  tasks:
+
+    - name: Add an user environment variable to the remote user's shell.
+      lineinfile:
+        dest: ~/.bash_profile
+        regexp: '^ENV_VAR='
+        line: "ENV_VAR=value"
+
+    - name: Get the value of the user environment variable we just added.
+      shell: 'source ~/.bash_profile && echo $ENV_VAR'
+      changed_when: false
+      register: foo
+
+    - name: Print the value of the environment variable.
+      debug:
+        msg: "The variable is {{ foo.stdout }}"
+
+    - name: Add a global environment variable.
+      lineinfile:
+        dest: /etc/environment
+        regexp: '^ENV_GLOBAL_VAR='
+        line: "ENV_GLOBAL_VAR=value"
+      become: true
+
+    - name: Get the value of the global environment variable we just added.
+      shell: 'source /etc/environment && echo $ENV_GLOBAL_VAR'
+      changed_when: false
+      register: bar
+
+    - name: Print the value of the environment variable.
+      debug:
+        msg: "The variable is {{ bar.stdout }}"

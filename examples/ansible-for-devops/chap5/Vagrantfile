@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "hyperv" do |h|
+    h.enable_virtualization_extensions = true
+    h.linked_clone = true
+    h.memory = 512
+    h.maxmemory = 512
+  end
+
+  config.vm.network "public_network", bridge: "Default Switch"
+  config.ssh.insert_key = false
+  config.hostmanager.enabled = true
+
+  # App server 1
+  config.vm.define "centos" do |app|
+    app.vm.box = "generic/centos8"
+    app.vm.hostname = "centos.test"
+  end
+
+  # App server 2
+  config.vm.define "ubuntu" do |app|
+    app.vm.box = "generic/ubuntu2004"
+    app.vm.hostname = "ubuntu.test"
+  end
+
+end
