@@ -1,0 +1,40 @@
+---
+- hosts: all
+  become: true
+
+  vars:
+    node_apps_location: /var/local/opt/node
+
+  pre_tasks: []
+
+  roles:
+    - nodejs
+
+  tasks:
+    - name: Ensure Node.js app folder exists.
+      file:
+        path: "{{ node_apps_location }}"
+        state: directory
+
+    - name: Copy example Node.js app to server.
+      copy:
+        src: app
+        dest: "{{ node_apps_location }}"
+
+    # If you need to execute role in the middle of play
+    # - include_role: nodejs
+
+    - name: Install app dependencies defined in package.json.
+      npm:
+        path: "{{ node_apps_location }}/app"
+
+    - name: Check list of running Node.js apps.
+      command: >
+        forever list
+      register: forever_list
+      changed_when: false
+
+    - name: Start example Node.js app.
+      command: >
+        forever start {{ node_apps_location }}/app/app.js
+      when: "forever_list.stdout.find(node_apps_location + '/app/app.js') == -1"
