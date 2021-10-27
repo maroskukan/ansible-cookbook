@@ -13,6 +13,9 @@
       - [Task environment variable](#task-environment-variable)
       - [Extra Variables](#extra-variables)
       - [Vault](#vault)
+      - [Blocks](#blocks)
+    - [Chapter 6](#chapter-6)
+      - [Imports](#imports)
 ## Documentation
 
 - [Creating Custom Dynamic Inventories](https://www.jeffgeerling.com/blog/creating-custom-dynamic-inventories-ansible)
@@ -452,8 +455,52 @@ There are multiple ways how to supply password. When running the playbook intera
 `--ask-vault-pass` argument.
 
 For automated playbook runs you can supply vault password via a password file. For example `~/.ansible/vault_pass.txt` with
-chmod of `600`. 
+chmod of `600`.
 
 ```bash
 ansible-playbook main.yml --vault-password-file ~/.ansible/vault_pass.txt
 ```
+
+#### Blocks
+
+Blocks can be used to introduce try, except, finally logic in playbooks.
+
+### Chapter 6
+
+Ansible allows you to organize tasks in more efficient way than having everything in single playbook by using **imports**, **includes** and **roles**.
+
+#### Imports
+
+```yml
+tasks:
+  - import_tasks: user.yml
+    vars:
+      username: johndoe
+      ssh_private_keys:
+        - { src: /path/to/johndoe/key1, dest: id_rsa }
+        - { src: /path/to/johndoe/key2, dest: id_rsa2 }
+
+```
+
+Tasks are formatted in a flat list in the included file `user.yml`.
+
+```yml
+- name: Add profile info for a user.
+  copy:
+    src: example_profile
+    dest: "/home/{{ username }}/.profile
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0744
+
+- name: Add private keys for user.
+  copy:
+    src: "{{ item.src }}"
+    dest: "/home/{{ username }}/.ssh/{{ item.dest }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0600
+  with_items: "{{ ssh_private_keys }}"
+```
+
+
