@@ -1,0 +1,13 @@
+- hosts: localhost  # This playbook will work but does not follow yaml (---) and ansible best practices
+  gather_facts: no  # This value should be true or false
+  connection: local
+
+  tasks:
+    - name: Register the output of the 'uptime' command.  # The line below contains extra white space
+      command: uptime 
+      register: system_uptime # this comment should have more spaces after the command
+
+    - name: Print the registered output of the 'uptime' command.
+      debug:
+        var: system_uptime.stdout
+# This yaml file does not have extra white line in the end

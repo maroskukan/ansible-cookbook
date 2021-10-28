@@ -16,6 +16,11 @@
       - [Blocks](#blocks)
     - [Chapter 6](#chapter-6)
       - [Imports](#imports)
+      - [Ansible Galaxy](#ansible-galaxy)
+    - [Chapter 13 - Testing and CI for Ansible Content](#chapter-13---testing-and-ci-for-ansible-content)
+      - [Yamllint](#yamllint)
+      - [ansible-playbook --syntax-check](#ansible-playbook---syntax-check)
+      - [ansible-lint](#ansible-lint)
 ## Documentation
 
 - [Creating Custom Dynamic Inventories](https://www.jeffgeerling.com/blog/creating-custom-dynamic-inventories-ansible)
@@ -503,4 +508,124 @@ Tasks are formatted in a flat list in the included file `user.yml`.
   with_items: "{{ ssh_private_keys }}"
 ```
 
+#### Ansible Galaxy
 
+Ansible Galaxy provides a platform to publish and share Ansible content such as collections and roles.
+
+To help keep roles isolated between projects, you need to define custom role path inside project `ansible.cfg` configuration file.
+
+```ini
+[defaults]
+roles_path = ./roles
+```
+
+Then you can download and install a particular role use the `role install` argument, followed by role name.
+
+```bash
+ansible-galaxy role install geerlingguy.solr
+```
+
+In order to list existing roles use the `role list` argument.
+
+```bash
+ansible-galaxy role list
+# /mnt/c/Users/maros_kukan/vagrant/ansible-cookbook/examples/ansible-for-devops/chap6/roles
+- geerlingguy.solr, 5.2.0
+```
+
+To remove installed role use the `role remove` argument, followed by the role name.
+
+```bash
+ansible-galaxy role remove geerlingguy.solr
+```
+
+You can also provide required collections using `requirements.yml` file inside the project directory and then install them via ansible-galaxy.
+
+```yml
+---
+roles:
+  - name: geerlinggiy.homebrew
+    varsion: 3.1.0
+```
+
+```bash
+ansible-galaxy install -r requirements.yml
+```
+
+### Chapter 13 - Testing and CI for Ansible Content
+
+Ansible testing spectrum from least to most complex.
+
+1. yamllint
+2. ansible-playbook --syntax-check
+3. ansible-lint
+4. molecule test (integration)
+5. ansible-playbook --check (against prod)
+6. parallel infrastructure
+
+#### Yamllint
+
+```bash
+yamllint chap13/03-yamllint/lint-example.yml
+chap13/03-yamllint/lint-example.yml
+  1:1       warning  missing document start "---"  (document-start)
+  1:81      error    line too long (103 > 80 characters)  (line-length)
+  2:17      warning  truthy value should be one of [false, true]  (truthy)
+  6:81      error    line too long (101 > 80 characters)  (line-length)
+  7:22      error    trailing spaces  (trailing-spaces)
+  8:31      warning  too few spaces before comment  (comments)
+  8:81      error    line too long (86 > 80 characters)  (line-length)
+  13:1      warning  comment not indented like content  (comments-indentation)
+  13:59     error    no new line character at the end of file  (new-line-at-end-of-file)
+```
+
+You can override some settings for example truthy values in `.yamllint`
+
+```yml
+---
+extends: default
+
+rules:
+  truthy:
+    allowed-values:
+      - 'true'
+      - 'false'
+      - 'yes'
+      - 'no'
+```
+
+#### ansible-playbook --syntax-check
+
+```bash
+ansible-playbook --syntax-check chap13/04-syntax-check/syntax-check.yml
+[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost
+does not match 'all'
+ERROR! Unable to retrieve file contents
+Could not find or access '/mnt/c/Users/maros_kukan/vagrant/ansible-cookbook/examples/ansible-for-devops/chap13/04-syntax-check/free.yml' on the Ansible Controller.
+If you are using a module and expect the file to exist on the remote, see the remote_src option
+```
+
+#### ansible-lint
+
+```bash
+ansible-lint chap13/05-ansible-lint/main.yml
+WARNING  Overriding detected file kind 'yaml' with 'playbook' for given positional argument: chap13/05-ansible-lint/main.yml
+WARNING  Listing 3 violation(s) that are fatal
+command-instead-of-shell: Use shell only when shell functionality is required
+chap13/05-ansible-lint/main.yml:7 Task/Handler: shell  uptime
+
+no-changed-when: Commands should not change things if nothing needs doing
+chap13/05-ansible-lint/main.yml:7 Task/Handler: shell  uptime
+
+unnamed-task: All tasks should be named
+chap13/05-ansible-lint/main.yml:7 Task/Handler: shell  uptime
+
+You can skip specific rules or tags by adding them to your configuration file:
+# .ansible-lint
+warn_list:  # or 'skip_list' to silence them completely
+  - command-instead-of-shell  # Use shell only when shell functionality is required
+  - no-changed-when  # Commands should not change things if nothing needs doing
+  - unnamed-task  # All tasks should be named
+
+Finished with 3 failure(s), 0 warning(s) on 1 files.
+```
