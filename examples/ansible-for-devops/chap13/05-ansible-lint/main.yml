@@ -4,9 +4,10 @@
   connection: local
 
   tasks:
-  - shell: uptime
+  - command: uptime
+    changed_when: false
     register: system_uptime
 
-  - name: sss
+  - name: Print the registered output of the 'uptime' command.
     debug:
       var: system_uptime.stdout
