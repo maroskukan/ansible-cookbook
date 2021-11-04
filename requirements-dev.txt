@@ -1,2 +1,3 @@
 -r support/req/req-lint.txt
+-r support/req/req-unittest.txt
 -r requirements.txt
