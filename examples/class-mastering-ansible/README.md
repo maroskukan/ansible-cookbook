@@ -8,6 +8,7 @@
   - [Application Setup](#application-setup)
     - [Install](#install)
     - [Validate](#validate)
+  - [Clean up](#clean-up)
 
 
 ## Documentation
@@ -59,4 +60,10 @@ ansible-playbook site.yml
 
 ```bash
 ansible-playbook validate.yml
+```
+
+## Clean up
+
+```bash
+vagrant destroy --force
 ```
