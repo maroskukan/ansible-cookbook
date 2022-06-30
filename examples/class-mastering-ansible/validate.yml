@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  become: false
+  tasks:
+    - name: Validate application stack
+      ansible.builtin.uri:
+        url: http://{{ hostvars.lb01.ansible_ssh_host }}
+        return_content: true
+      register: result
+      failed_when:
+        - "'app1' not in result.content"
+        - "'app2' not in result.content"
