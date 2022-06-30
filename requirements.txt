@@ -1,2 +1,2 @@
-ansible
-vagranttoansible
+ansible==6.0.0
+vagranttoansible==1.0.2
