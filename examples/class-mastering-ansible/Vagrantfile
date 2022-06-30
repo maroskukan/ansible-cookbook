@@ -2,26 +2,51 @@
 # vi: set ft=ruby :
 
 Vagrant.configure(2) do |config|
+    # Hyper-V Provider Specific Configuration
     config.vm.provider "hyperv" do |h|
         h.enable_virtualization_extensions = true
         h.linked_clone = true
+        h.memory = 2048
+        h.maxmemory = 2048
     end
-    config.hostmanager.enabled = true
-    config.vm.box = "generic/ubuntu2004"
-    
-    # config.vm.provision "ansible" do |ansible|
-    #     ansible.playbook = "provision.yml"
 
+    # Virtualbox Provider Specific Configuration
+    config.vm.provider "virtualbox" do |v|
+        v.memory = 2048
+        v.cpus = 2
+    end
+
+    config.hostmanager.enabled = true
+    config.vm.box = "generic/ubuntu2204"
+
+    # Hyper-V VM Specific Configuration
+    config.vm.provider 'hyperv' do |h, override|
+      override.vm.synced_folder ".", "/vagrant", type: "rsync"
+      override.vm.network "public_network", bridge: "Default Switch"
+    end
+
+    # Virtualbox VM Specific Configuration
+    config.vm.provider 'virtualbox' do |v, override|
+      override.vm.synced_folder ".", "/vagrant"
+    end
+
+    # LB Tier
     config.vm.define "lb01" do |lb01|
         lb01.vm.hostname = "lb01"
     end
 
+    # App Tier
     (01..02).each do |i|
         config.vm.define "app#{i}" do |app|
             app.vm.hostname = "app#{i}"
-        end        
+        end
     end
+
+    # DB Tier
     config.vm.define "db01" do |db01|
         db01.vm.hostname = "db01"
     end
+
+    # config.vm.provision "ansible" do |ansible|
+    #     ansible.playbook = "provision.yml"
 end
